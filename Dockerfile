@@ -1,4 +1,4 @@
-FROM php:8.2-fpm-buster
+FROM php:7.1-fpm-buster
 
 RUN apt-get update
 
@@ -16,7 +16,7 @@ RUN apt-get install -y --no-install-recommends \
     pdo pdo_mysql \
     opcache
 
-RUN yes | pecl install xdebug \
+RUN yes | pecl install xdebug-2.5.5 \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.mode=debug" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.discover_client_host=1" >> /usr/local/etc/php/conf.d/xdebug.ini \
