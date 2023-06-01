@@ -12,7 +12,7 @@ jobs:
     name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install PHP
         uses: shivammathur/setup-php@v2
@@ -22,23 +22,8 @@ jobs:
       - name: Check PHP Version
         run: php -v
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-
-      - name: Get composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache dependencies
-        uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-
-      - name: Install dependencies
-        if: steps.composer-cache.outputs.cache-hit != 'true'
-        run: composer install --prefer-dist --no-progress --no-suggest
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v2
 
       - name: Check PHPStan
         run: ./vendor/bin/phpstan analyse src/ tests/ --level 9
