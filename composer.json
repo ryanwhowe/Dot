@@ -1,0 +1,27 @@
+{
+    "name": "ryanwhowe/dot",
+    "description": "Access and Set values in an array using dot notation or any other separator",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Ryanwhowe\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ryan W Howe",
+            "email": "ryanwhowe@gmail.com"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Ryanwhowe\\": "tests/"
+        }
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpunit/phpunit": "*",
+        "phpstan/phpstan": "^1.10"
+    }
+}
