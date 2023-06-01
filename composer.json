@@ -6,7 +6,9 @@
     "keywords": [
         "array",
         "dot",
-        "access"
+        "access",
+        "notation",
+        "data"
     ],
     "autoload": {
         "psr-4": {
