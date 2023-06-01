@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryanwhowe;
+namespace Ryanwhowe\Dot;
 
 use InvalidArgumentException;
 
@@ -80,9 +80,8 @@ class Dot {
      */
     public static function has(array $array, $key, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
-        /* the null byte is not storable in an array value, this is used to ensure no false positives are found */
-        $v = self::get($array, $key, "\0", $delimiter);
-        return ($v !== "\0"); // if the default value is returned then the key was not found
+        $v = self::get($array, $key, "\0\0", $delimiter);
+        return ($v !== "\0\0"); // if the default value is returned then the key was not found
     }
 
     /**

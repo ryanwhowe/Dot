@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Ryanwhowe;
+namespace Tests\Ryanwhowe\Dot;
 
-use Ryanwhowe\Dot;
+use Ryanwhowe\Dot\Dot;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
@@ -113,6 +113,9 @@ class DotTest extends TestCase {
     public function flattenWithCustomDelimiters($delimiter, array $test, array $expected) {
         $actual = Dot::flatten($test, $delimiter);
         $this->assertEquals($expected, $actual);
+        $reset = [];
+        foreach ($actual as $key => $value) Dot::set($reset, $key, $value, $delimiter);
+        $this->assertEquals($test, $reset);
     }
 
     /**
@@ -158,31 +161,6 @@ class DotTest extends TestCase {
     public function flattenEmptyStringFailure($deliminator) {
         $this->expectException(InvalidArgumentException::class);
         Dot::flatten([], $deliminator);
-    }
-
-    /**
-     * @return string[][]
-     */
-    public static function popFlattenDataProvider() {
-        return [
-            'Dot test1' => ['test1', 'test1', ''],
-            'Dot test2' => ['test1.test2', 'test2', 'test1'],
-            'Dot test3' => ['test1.test2.test3', 'test3', 'test1.test2'],
-            'Dot test4' => ['test1.test2.test3.test4', 'test4', 'test1.test2.test3'],
-            'Tilda test1' => ['test1', 'test1', '', '~'],
-            'Tilda test2' => ['test1~test2', 'test2', 'test1', '~'],
-            'Tilda test3' => ['test1~test2~test3', 'test3', 'test1~test2', '~'],
-            'Tilda test4' => ['test1~test2~test3~test4', 'test4', 'test1~test2~test3', '~'],
-
-            'Dot 1' => ['1', '1', ''],
-            'Dot 2' => ['1.2', '2', '1'],
-            'Dot 3' => ['1.2.3', '3', '1.2'],
-            'Dot 4' => ['1.2.3.4', '4', '1.2.3'],
-            'Tilda 1' => ['1', '1', '', '~'],
-            'Tilda 2' => ['1~2', '2', '1', '~'],
-            'Tilda 3' => ['1~2~3', '3', '1~2', '~'],
-            'Tilda 4' => ['1~2~3~4', '4', '1~2~3', '~'],
-        ];
     }
 
     /**
