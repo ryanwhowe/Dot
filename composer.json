@@ -1,0 +1,35 @@
+{
+    "name": "ryanwhowe/dot",
+    "description": "A PHP library to access and Set values in an array using dot notation or any other separator",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "array",
+        "dot",
+        "access"
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ryanwhowe\\Dot\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Ryan W Howe",
+            "email": "ryanwhowe@gmail.com"
+        }
+    ],
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\Ryanwhowe\\Dot\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^5.6 || ^7.0"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
