@@ -1,10 +1,10 @@
-<h1 align="center">ryanwhowe/dot</h1>
+<h1 style="text-align: center">ryanwhowe/dot</h1>
 
-<p align="center">
+<p style="text-align: center">
     <strong>A PHP library to access and set array values using dot notation or any other key separator.</strong>
 </p>
 
-<p align="center">
+<p style="text-align: center">
     <a href="https://github.com/ryanwhowe/dot"><img src="https://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
      <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
     <a href="https://github.com/ryanwhowe/dot/blob/1.x/LICENSE"><img src="https://img.shields.io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
@@ -16,6 +16,10 @@ Q: There are quite a few 'dot' projects that exist on Packagist, what is differe
 > Every other 'dot' project requires you to create a copy of your data and instantiate a new class, this project
 > uses light weight static methods to access and modify your existing arrays without the need to create a second
 > copy of the data.
+
+>
+> The other advantage that this has over many other implementations is that you can select an alternative key
+> separator than a '.' which is necessary if you have key values that contain '.' characters in them.
 
 Q: Why add this to Packagist?
 >

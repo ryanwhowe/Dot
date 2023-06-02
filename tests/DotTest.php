@@ -52,6 +52,20 @@ class DotTest extends TestCase {
 
     /**
      * @test
+     * @dataProvider dotCountDataProvider
+     * @param mixed[] $test
+     * @param non-empty-string $key
+     * @param int $expected
+     * @param non-empty-string $delimiter
+     * @return void
+     */
+    public function dotCount(array $test, $key, $expected, $delimiter = Dot::DEFAULT_DELIMITER) {
+        $actual = Dot::count($test, $key, $delimiter);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
      * @dataProvider flattenDataProvider
      * @param mixed[] $test
      * @param array<non-empty-string, mixed> $expected
@@ -317,6 +331,23 @@ class DotTest extends TestCase {
             'multiple level not present custom delim' => [$base_search_array, 'test1~notthere', false, '~'],
             'multiple level many not present custom delim' => [$base_search_array, 'test1~test1~blah1~blah2~blah3~blah4~blah5', false, '~'],
 
+        ];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function dotCountDataProvider() {
+        return [
+            'empty array' => [[], 'a', -1],
+            'string value test' => [['a' => ''], 'a', -1],
+            'int value test' => [['a' => 123], 'a', -1],
+            'float value test' => [['a' => 12.3], 'a', -1],
+            'bool value test' => [['a' => false], 'a', -1],
+            'empty array value test' => [['a' => []], 'a', 0],
+            'single value test' => [['a' => ['b']], 'a', 1],
+            'multi value test' => [['a' => ['b', 'c', 'd']], 'a', 3],
+            'delimiter test' => [['a' => ['b' => ['c', 'd', 'e', 'f']]], 'a~b', 4, '~']
         ];
     }
 
