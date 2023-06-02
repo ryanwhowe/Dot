@@ -5,13 +5,10 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/ryanwhowe/dot"><img src="http://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
+    <a href="https://github.com/ryanwhowe/dot"><img src="https://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
      <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
-    <a href="https://github.com/ryanwhowe/dot/blob/1.x/LICENSE"><img src="https://img.shields.
-io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
-    <a href="https://github.com/ryanwhowe/dot/actions/workflows/continuous-integration.yml"><img src="https://img.
-shields.io/github/actions/workflow/status/ryanwhowe/dot/php.yml?branch=1.x&logo=github&style=flat-square" alt="Build 
-Status"></a>
+    <a href="https://github.com/ryanwhowe/dot/blob/1.x/LICENSE"><img src="https://img.shields.io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
+    <a href="https://github.com/ryanwhowe/dot/actions/workflows/php.yml"><img src="https://img.shields.io/github/actions/workflow/status/ryanwhowe/dot/php.yml?branch=1.x&logo=github&style=flat-square" alt="Build Status"></a>
 </p>
 
 Q: There are quite a few 'dot' projects that exist on Packagist, what is different about this one?
