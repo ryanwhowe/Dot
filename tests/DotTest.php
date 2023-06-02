@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace Tests\Ryanwhowe\Dot;
+namespace Ryanwhowe\Dot\Test;
 
 use Ryanwhowe\Dot\Dot;
 use InvalidArgumentException;
@@ -17,7 +17,7 @@ class DotTest extends TestCase {
      * @param mixed[] $expected
      * @return void
      */
-    public function set(array $test, $key, $value, $expected) {
+    public function set(array $test, string $key, $value, array $expected) {
         Dot::set($test, $key, $value);
         $this->assertEquals($expected, $test);
     }
@@ -31,7 +31,7 @@ class DotTest extends TestCase {
      * @param mixed|null $default
      * @return void
      */
-    public function get(array $test, $key, $expected, $default = null) {
+    public function get(array $test, string $key, $expected, $default = null) {
         $actual = Dot::get($test, $key, $default, Dot::DEFAULT_DELIMITER);
         $this->assertEquals($expected, $actual);
     }
@@ -45,7 +45,7 @@ class DotTest extends TestCase {
      * @param non-empty-string $delimiter
      * @return void
      */
-    public function has(array $test, $key, $expected, $delimiter = Dot::DEFAULT_DELIMITER) {
+    public function has(array $test, string $key, bool $expected, string $delimiter = Dot::DEFAULT_DELIMITER) {
         $actual = Dot::has($test, $key, $delimiter);
         $this->assertEquals($expected, $actual);
     }
@@ -76,7 +76,7 @@ class DotTest extends TestCase {
      * @param mixed[] $expected
      * @return void
      */
-    public function setCustomDelimiter(array $test, $key, $value, array $expected) {
+    public function setCustomDelimiter(array $test, string $key, $value, array $expected) {
 
         $custom_delimiter = '~';
         $key = str_replace('.', $custom_delimiter, $key);
@@ -94,7 +94,7 @@ class DotTest extends TestCase {
      * @param mixed|null $default
      * @return void
      */
-    public function getCustomDelimiter(array $test, $key, $expected, $default = null) {
+    public function getCustomDelimiter(array $test, string $key, $expected, $default = null) {
         $custom_delimiter = '~';
         $key = str_replace('.', $custom_delimiter, $key);
 
@@ -110,11 +110,13 @@ class DotTest extends TestCase {
      * @param mixed[] $expected
      * @return void
      */
-    public function flattenWithCustomDelimiters($delimiter, array $test, array $expected) {
+    public function flattenWithCustomDelimiters(string $delimiter, array $test, array $expected) {
         $actual = Dot::flatten($test, $delimiter);
         $this->assertEquals($expected, $actual);
         $reset = [];
-        foreach ($actual as $key => $value) Dot::set($reset, $key, $value, $delimiter);
+        foreach ($actual as $key => $value) {
+            if (strlen($key) > 0) Dot::set($reset, $key, $value, $delimiter);
+        }
         $this->assertEquals($test, $reset);
     }
 
@@ -124,7 +126,7 @@ class DotTest extends TestCase {
      * @return void
      * @dataProvider invalidDelimiterDataProvider
      */
-    public function getEmptyStringFailure($deliminator) {
+    public function getEmptyStringFailure(string $deliminator) {
         $this->expectException(InvalidArgumentException::class);
         Dot::get([], 'test.test', null, $deliminator);
     }
@@ -135,7 +137,7 @@ class DotTest extends TestCase {
      * @return void
      * @dataProvider invalidDelimiterDataProvider
      */
-    public function setEmptyStringFailure($deliminator) {
+    public function setEmptyStringFailure(string $deliminator) {
         $this->expectException(InvalidArgumentException::class);
         $test = [];
         Dot::set($test, 'test.test', 'test', $deliminator);
@@ -147,7 +149,7 @@ class DotTest extends TestCase {
      * @dataProvider invalidDelimiterDataProvider
      * @return void
      */
-    public function hasEmptyStringFailure($deliminator) {
+    public function hasEmptyStringFailure(string $deliminator) {
         $this->expectException(InvalidArgumentException::class);
         Dot::has([], 'test.test', $deliminator);
     }
@@ -158,7 +160,7 @@ class DotTest extends TestCase {
      * @dataProvider invalidDelimiterDataProvider
      * @return void
      */
-    public function flattenEmptyStringFailure($deliminator) {
+    public function flattenEmptyStringFailure(string $deliminator) {
         $this->expectException(InvalidArgumentException::class);
         Dot::flatten([], $deliminator);
     }
@@ -380,8 +382,6 @@ class DotTest extends TestCase {
     public static function invalidDelimiterDataProvider() {
         return [
             'Empty String Deliminator' => [''],
-            'Null Deliminator' => [null],
-            'Array Deliminator' => [[]],
         ];
     }
 }

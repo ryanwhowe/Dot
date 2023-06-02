@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 namespace Ryanwhowe\Dot;
 
@@ -27,7 +27,7 @@ class Dot {
      * @return array|mixed|null
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    public static function get(array $array, $key, $default = null, $delimiter = self::DEFAULT_DELIMITER) {
+    public static function get(array $array, string $key, $default = null, string $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
         $keys = explode($delimiter, $key);
         $key_pos = array_shift($keys);
@@ -55,7 +55,7 @@ class Dot {
      * @return void
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    public static function set(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER) {
+    public static function set(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
         $keys = explode($delimiter, $key);
         $key_pos = array_shift($keys);
@@ -78,7 +78,7 @@ class Dot {
      * @return bool
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    public static function has(array $array, $key, $delimiter = self::DEFAULT_DELIMITER) {
+    public static function has(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER): bool {
         self::validateDelimiter($delimiter);
         $v = self::get($array, $key, "\0\0", $delimiter);
         return ($v !== "\0\0"); // if the default value is returned then the key was not found
@@ -93,7 +93,7 @@ class Dot {
      * @return array<string, mixed> flattened single dimension array of the source array
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    public static function flatten(array $array, $delimiter = self::DEFAULT_DELIMITER, $prepend = '') {
+    public static function flatten(array $array, string $delimiter = self::DEFAULT_DELIMITER, string $prepend = ''): array {
         self::validateDelimiter($delimiter);
         $flattened = [];
         foreach ($array as $key => $value) {
@@ -109,25 +109,12 @@ class Dot {
     /**
      * Validate that the deliminator provided is valid
      *
-     * @param mixed $delimiter
+     * @param string $delimiter
      * @return void
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    private static function validateDelimiter($delimiter) {
-        if (is_null($delimiter)) self::InvalidDelimiterException('A Null');
-        if (is_array($delimiter)) self::InvalidDelimiterException('An Array');
-        if ($delimiter === '') self::InvalidDelimiterException('A string of length 0');
-    }
-
-    /**
-     * Common exception throwing for invalid deliminators
-     *
-     * @param string $message
-     * @return void
-     * @throws InvalidArgumentException
-     */
-    private static function InvalidDelimiterException($message) {
-        throw new InvalidArgumentException($message . ' Delimiter is not valid');
+    private static function validateDelimiter(string $delimiter) {
+        if ($delimiter === '') throw new InvalidArgumentException('A string of length 0 Delimiter is not valid');
     }
 
 }
