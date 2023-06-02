@@ -4,6 +4,28 @@
     <strong>A PHP library to access and set array values using dot notation or any other key separator.</strong>
 </p>
 
+<p align="center">
+    <a href="https://github.com/ryanwhowe/dot"><img src="http://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
+     <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
+    <a href="https://github.com/ryanwhowe/dot/blob/1.x/LICENSE"><img src="https://img.shields.
+io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
+    <a href="https://github.com/ryanwhowe/dot/actions/workflows/continuous-integration.yml"><img src="https://img.
+shields.io/github/actions/workflow/status/ryanwhowe/dot/php.yml?branch=1.x&logo=github&style=flat-square" alt="Build 
+Status"></a>
+</p>
+
+Q: There are quite a few 'dot' projects that exist on Packagist, what is different about this one?
+>
+> Every other 'dot' project requires you to create a copy of your data and instantiate a new class, this project
+> uses light weight static methods to access and modify your existing arrays without the need to create a second
+> copy of the data.
+
+Q: Why add this to Packagist?
+>
+> This package has been used on several of my projects both personally and professionally and I am tired of copying
+> the class from one project to another. If my teams and I get usage out of this project, I wanted to share it to
+> allow anyone else who this could help use it as well.
+
 ## Installation
 
 The preferred method of installation is via [Composer][]. Run the following command to install the package and add it as
