@@ -109,7 +109,8 @@ class Dot {
 
     /**
      * Append a value to the key position, if the value at the key position is not an array the result will be an
-     * array with the existing value and new value.  If the key does not exist
+     * array with the existing value and new value.  If the key does not exist its full path will be set to an array
+     * containing the value submitted.
      *
      * @param mixed[] $array
      * @param non-empty-string $key
@@ -118,13 +119,37 @@ class Dot {
      * @return void
      * @throws InvalidArgumentException if an invalid deliminator is used
      */
-    public static function append(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER)
-    {
+    public static function append(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
         $current = self::get($array, $key, [], $delimiter);
         $current = (is_array($current)) ? $current : [$current];
         $value = (is_array($value)) ? $value : [$value];
         self::set($array, $key, array_merge($current, $value), $delimiter);
+    }
+
+    /**
+     * Unset the provided key position in the array if it exists.
+     *
+     * @param mixed[] $array
+     * @param non-empty-string $key
+     * @param non-empty-string $delimiter
+     * @return void
+     */
+    public static function delete(array &$array, $key, $delimiter = self::DEFAULT_DELIMITER) {
+        self::validateDelimiter($delimiter);
+
+        if (!self::has($array, $key)) {
+            return;
+        }
+
+        $keys = explode($delimiter, $key);
+        $final = array_pop($keys);
+        $current = &$array;
+        foreach ($keys as $_key) {
+            if (is_array($current[$_key])) $current = &$current[$_key];
+        }
+
+        unset($current[$final]);
     }
 
     /**
