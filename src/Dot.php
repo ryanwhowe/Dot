@@ -85,6 +85,26 @@ class Dot {
     }
 
     /**
+     * Append a value to the key position, if the value at the key position is not an array the result will be an
+     * array with the existing value and new value.  If the key does not exist
+     *
+     * @param mixed[] $array
+     * @param non-empty-string $key
+     * @param array|mixed|null $value
+     * @param non-empty-string $delimiter
+     * @return void
+     * @throws InvalidArgumentException if an invalid deliminator is used
+     */
+    public static function append(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER)
+    {
+        self::validateDelimiter($delimiter);
+        $current = self::get($array, $key, [], $delimiter);
+        $current = (is_array($current)) ? $current : [$current];
+        $value = (is_array($value)) ? $value : [$value];
+        self::set($array, $key, array_merge($current, $value), $delimiter);
+    }
+
+    /**
      * Flatten a multidimensional array to a single dimension with dot keys => value
      *
      * @param mixed[] $array The source array to flatten

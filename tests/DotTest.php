@@ -164,6 +164,35 @@ class DotTest extends TestCase {
     }
 
     /**
+     * @test
+     * @dataProvider appendDataProvider
+     * @param array $array
+     * @param $key
+     * @param $value
+     * @param $expected
+     * @return void
+     */
+    public function append(array $array, $key, $value, $expected){
+        Dot::append($array, $key, $value);
+        $this->assertEquals($expected, $array);
+    }
+
+
+    /**
+     * @return mixed[]
+     */
+    public static function appendDataProvider() {
+        return [
+            'append to array' => [['test' => ['test1']], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to value' => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append null' => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
+            'append to arrays' => [['test' => ['test1' => ['test3']]], 'test', 'test2', ['test' => ['test1' => ['test3'], 'test2']]],
+            'append to nothing' => [[], 'test', 'test1', ['test' => ['test1']]],
+            'append to deep array' => [['test' => ['test1' => ['test2' => ['test3']]]], 'test.test1.test2', 'test4', ['test' => ['test1' => ['test2' => ['test3', 'test4']]]]],
+        ];
+    }
+
+    /**
      * @return mixed[]
      */
     public static function setDataProvider() {
