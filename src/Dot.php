@@ -12,6 +12,9 @@ class Dot {
 
     const DEFAULT_DELIMITER = '.';
 
+    const ZERO_ON_NON_ARRAY = 1;
+    const NEGATIVE_ON_NON_ARRAY = 2;
+
     /**
      * This class is a static class and should not be instantiated
      */
@@ -85,19 +88,23 @@ class Dot {
     }
 
     /**
-     * Return the count of the value at the provided key position.  If the value is not set or not an array the method
-     * will return -1.  If a count of 0 is returned it is an empty array.
+     * Return the count of the value at the provided key position.  The method will return 0 on an empty array.
+     * The $return defaults to return 0 if the value is not set or the key position is not an array.
+     * It $return is set to Dot::COUNT_NEGATIVE_ON_NON_ARRAY the method will return -1 if the value is not set or the
+     * key position is not an array.
      *
      * @param mixed[] $array
      * @param non-empty-string $key
      * @param non-empty-string $delimiter
+     * @param int $return defaults to returning 0 count on not set or not array, can be set to return -1
      * @return int
      * @throws InvalidArgumentException if an invalid delimiter is used
      */
-    public static function count(array $array, $key, $delimiter = self::DEFAULT_DELIMITER) {
+    public static function count(array $array, $key, $delimiter = self::DEFAULT_DELIMITER, $return = self::ZERO_ON_NON_ARRAY) {
         self::validateDelimiter($delimiter);
+        $default = (self::NEGATIVE_ON_NON_ARRAY === $return) ? -1 : 0;
         $position = self::get($array, $key, '', $delimiter);
-        return is_array($position) ? count($position) : -1;
+        return is_array($position) ? count($position) : $default;
     }
 
     /**
