@@ -12,6 +12,9 @@ class Dot {
 
     const DEFAULT_DELIMITER = '.';
 
+    const ZERO_ON_NON_ARRAY = 1;
+    const NEGATIVE_ON_NON_ARRAY = 2;
+
     /**
      * This class is a static class and should not be instantiated
      */
@@ -25,7 +28,7 @@ class Dot {
      * @param mixed|null $default
      * @param non-empty-string $delimiter
      * @return array|mixed|null
-     * @throws InvalidArgumentException if an invalid deliminator is used
+     * @throws InvalidArgumentException if an invalid delimiter is used
      */
     public static function get(array $array, $key, $default = null, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -53,7 +56,7 @@ class Dot {
      * @param array|mixed|null $value
      * @param non-empty-string $delimiter
      * @return void
-     * @throws InvalidArgumentException if an invalid deliminator is used
+     * @throws InvalidArgumentException if an invalid delimiter is used
      */
     public static function set(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -76,12 +79,32 @@ class Dot {
      * @param non-empty-string $key Dot notation key
      * @param non-empty-string $delimiter
      * @return bool
-     * @throws InvalidArgumentException if an invalid deliminator is used
+     * @throws InvalidArgumentException if an invalid delimiter is used
      */
     public static function has(array $array, $key, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
         $v = self::get($array, $key, "\0\0", $delimiter);
         return ($v !== "\0\0"); // if the default value is returned then the key was not found
+    }
+
+    /**
+     * Return the count of the value at the provided key position.  The method will return 0 on an empty array.
+     * The $return defaults to return 0 if the value is not set or the key position is not an array.
+     * It $return is set to Dot::COUNT_NEGATIVE_ON_NON_ARRAY the method will return -1 if the value is not set or the
+     * key position is not an array.
+     *
+     * @param mixed[] $array
+     * @param non-empty-string $key
+     * @param non-empty-string $delimiter
+     * @param int $return defaults to returning 0 count on not set or not array, can be set to return -1
+     * @return int
+     * @throws InvalidArgumentException if an invalid delimiter is used
+     */
+    public static function count(array $array, $key, $delimiter = self::DEFAULT_DELIMITER, $return = self::ZERO_ON_NON_ARRAY) {
+        self::validateDelimiter($delimiter);
+        $default = (self::NEGATIVE_ON_NON_ARRAY === $return) ? -1 : 0;
+        $position = self::get($array, $key, '', $delimiter);
+        return is_array($position) ? count($position) : $default;
     }
 
     /**
@@ -91,7 +114,7 @@ class Dot {
      * @param non-empty-string $delimiter The delimiter to use between keys
      * @param string $prepend if there is any prepend string to the key sequence to use
      * @return array<string, mixed> flattened single dimension array of the source array
-     * @throws InvalidArgumentException if an invalid deliminator is used
+     * @throws InvalidArgumentException if an invalid delimiter is used
      */
     public static function flatten(array $array, $delimiter = self::DEFAULT_DELIMITER, $prepend = '') {
         self::validateDelimiter($delimiter);
@@ -111,7 +134,7 @@ class Dot {
      *
      * @param mixed $delimiter
      * @return void
-     * @throws InvalidArgumentException if an invalid deliminator is used
+     * @throws InvalidArgumentException if an invalid delimiter is used
      */
     private static function validateDelimiter($delimiter) {
         if (is_null($delimiter)) self::InvalidDelimiterException('A Null');
@@ -120,7 +143,7 @@ class Dot {
     }
 
     /**
-     * Common exception throwing for invalid deliminators
+     * Common exception throwing for invalid delimiters
      *
      * @param string $message
      * @return void
