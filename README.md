@@ -38,7 +38,7 @@ composer require ryanwhowe/dot
 
 ## Usage
 
-The Dot class contains 4 static methods to facilitate the safe access and setting of array data in php.
+The Dot class contains static methods to facilitate the safe access, setting, unsetting and counting of array data in php.
 
 ### `Dot::has()`
 
