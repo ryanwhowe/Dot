@@ -23,12 +23,13 @@ class Dot {
     /**
      * Return the value that the array has for the dot notation key, if there is no value to return the default is returned
      *
-     * @param mixed[] $array
+     * @param mixed[]          $array
      * @param non-empty-string $key
-     * @param mixed|null $default
+     * @param mixed|null       $default
      * @param non-empty-string $delimiter
-     * @return array|mixed|null
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return array|mixed|null
      */
     public static function get(array $array, $key, $default = null, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -51,12 +52,13 @@ class Dot {
      * Set the value in the array dictated by the dot notation key, if the path of the key does not exist it will be
      * created in the array.
      *
-     * @param mixed[] &$array
+     * @param mixed[]          $array
      * @param non-empty-string $key
      * @param array|mixed|null $value
      * @param non-empty-string $delimiter
-     * @return void
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return void
      */
     public static function set(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -75,11 +77,12 @@ class Dot {
     /**
      * Does the array have the passed dot notation key
      *
-     * @param mixed[] $array
+     * @param mixed[]          $array
      * @param non-empty-string $key Dot notation key
      * @param non-empty-string $delimiter
-     * @return bool
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return bool
      */
     public static function has(array $array, $key, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -93,12 +96,13 @@ class Dot {
      * It $return is set to Dot::COUNT_NEGATIVE_ON_NON_ARRAY the method will return -1 if the value is not set or the
      * key position is not an array.
      *
-     * @param mixed[] $array
+     * @param mixed[]          $array
      * @param non-empty-string $key
      * @param non-empty-string $delimiter
-     * @param int $return defaults to returning 0 count on not set or not array, can be set to return -1
-     * @return int
+     * @param int              $return defaults to returning 0 count on not set or not array, can be set to return -1
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return int
      */
     public static function count(array $array, $key, $delimiter = self::DEFAULT_DELIMITER, $return = self::ZERO_ON_NON_ARRAY) {
         self::validateDelimiter($delimiter);
@@ -112,12 +116,13 @@ class Dot {
      * array with the existing value and new value.  If the key does not exist its full path will be set to an array
      * containing the value submitted.
      *
-     * @param mixed[] $array
+     * @param mixed[]          $array
      * @param non-empty-string $key
      * @param array|mixed|null $value
      * @param non-empty-string $delimiter
-     * @return void
+     *
      * @throws InvalidArgumentException if an invalid deliminator is used
+     * @return void
      */
     public static function append(array &$array, $key, $value, $delimiter = self::DEFAULT_DELIMITER) {
         self::validateDelimiter($delimiter);
@@ -130,9 +135,10 @@ class Dot {
     /**
      * Unset the provided key position in the array if it exists.
      *
-     * @param mixed[] $array
+     * @param mixed[]          $array
      * @param non-empty-string $key
      * @param non-empty-string $delimiter
+     *
      * @return void
      */
     public static function delete(array &$array, $key, $delimiter = self::DEFAULT_DELIMITER) {
@@ -155,11 +161,12 @@ class Dot {
     /**
      * Flatten a multidimensional array to a single dimension with dot keys => value
      *
-     * @param mixed[] $array The source array to flatten
+     * @param mixed[]          $array     The source array to flatten
      * @param non-empty-string $delimiter The delimiter to use between keys
-     * @param string $prepend if there is any prepend string to the key sequence to use
-     * @return array<string, mixed> flattened single dimension array of the source array
+     * @param string           $prepend   if there is any prepend string to the key sequence to use
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return array<string, mixed> flattened single dimension array of the source array
      */
     public static function flatten(array $array, $delimiter = self::DEFAULT_DELIMITER, $prepend = '') {
         self::validateDelimiter($delimiter);
@@ -178,8 +185,9 @@ class Dot {
      * Validate that the deliminator provided is valid
      *
      * @param mixed $delimiter
-     * @return void
+     *
      * @throws InvalidArgumentException if an invalid delimiter is used
+     * @return void
      */
     private static function validateDelimiter($delimiter) {
         if (is_null($delimiter)) self::InvalidDelimiterException('A Null');
@@ -191,8 +199,9 @@ class Dot {
      * Common exception throwing for invalid delimiters
      *
      * @param string $message
-     * @return void
+     *
      * @throws InvalidArgumentException
+     * @return void
      */
     private static function InvalidDelimiterException($message) {
         throw new InvalidArgumentException($message . ' Delimiter is not valid');

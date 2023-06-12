@@ -191,6 +191,33 @@ class DotTest extends TestCase {
         $this->assertEquals($expected, $array);
     }
 
+    /**
+     * @test
+     * @dataProvider deleteDataProvider
+     * @param array $array
+     * @param       $key
+     * @param       $expected
+     * @param       $delimiter
+     *
+     * @return void
+     */
+    public function dotDelete(array $array, $key, $expected, $delimiter = Dot::DEFAULT_DELIMITER ) {
+        Dot::delete($array, $key, $delimiter);
+        $this->assertEquals($expected, $array);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function deleteDataProvider() {
+        return [
+            'delete a value' => [['a'=>['b'=>['c'=>'d']]], 'a.b.c', ['a'=>['b'=>[]]]],
+            'delete a value in set' => [['a'=>['b'=>['c'=>'d', 'e'=>'f']]], 'a.b.e', ['a'=>['b'=>['c'=>'d']]]],
+            'delete a value in mixed set' => [['a'=>['b'=>['c'=>'d', 'e'=>'f', 'g' => ['h'=>'i']]]], 'a.b.e', ['a'=>['b'=>['c'=>'d', 'g' => ['h'=>'i']]]]],
+            'delete a array' => [['a'=>['b'=>['c'=>'d']]], 'a.b', ['a'=>[]]],
+            'no key found' => [['a'=>['b'=>['c'=>'d']]], 'a.b.c.e', ['a'=>['b'=>['c'=>'d']]]],
+        ];
+    }
 
     /**
      * @return mixed[]
@@ -198,11 +225,15 @@ class DotTest extends TestCase {
     public static function appendDataProvider() {
         return [
             'append to array' => [['test' => ['test1']], 'test', 'test2', ['test' => ['test1', 'test2']]],
-            'append to value' => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
-            'append null' => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
+            'append to string value' => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to int value' => [['test' => 'test1'], 'test', 1, ['test' => ['test1', 1]]],
+            'append to float value' => [['test' => 'test1'], 'test', 1.1, ['test' => ['test1', 1.1]]],
+            'append to bool value' => [['test' => 'test1'], 'test', false, ['test' => ['test1', false]]],
+            'append to null value' => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
             'append to arrays' => [['test' => ['test1' => ['test3']]], 'test', 'test2', ['test' => ['test1' => ['test3'], 'test2']]],
             'append to nothing' => [[], 'test', 'test1', ['test' => ['test1']]],
             'append to deep array' => [['test' => ['test1' => ['test2' => ['test3']]]], 'test.test1.test2', 'test4', ['test' => ['test1' => ['test2' => ['test3', 'test4']]]]],
+            'append to key value array' => [['test'=>['test1'=>['test3' => 'test4']]],'test.test1', 'test5', ['test'=>['test1'=>['test3' => 'test4', 'test5']]]],
         ];
     }
 

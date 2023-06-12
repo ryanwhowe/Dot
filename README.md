@@ -272,6 +272,169 @@ array (
 )
 ```
 
+### `Dot::append()`
+
+The `Dot::append()` method will set the passed value as an array value inside the provided array at the location of the key provided. If the location already contains a value the values will be merged into a single array.  The 
+append method will create the key structure needed to place the array value in the array if it is not present already. This
+method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
+need to search further down than 100 levels this likely is the wrong tool to utilize.
+
+#### Description
+
+```
+Dot::append(array &$setArray, string $setKey, mixed $value, string $delimiter = '.'): void
+```
+
+#### Parameters
+
+<dl>
+<dt>setArray</dt>
+<dd>The array that will the value will be placed inside</dd>
+
+<dt>setKey</dt>
+<dd>The delimited key that will be searched for in the provided searchArray.  If the array does not have string 
+keys number strings can be used instead to access the appropriate position in the array</dd>
+
+<dt>value</dt>
+<dd>The value be set in the array.  If the key location is not set already in the array the full path to the key location will be created and the value will be added to the key location in an array.  If there is already a value in the key location the new value will be appended to the end of the array.  If the value in the key location is not an array the location will be converted to an array and the new value will be appended to the end of the new array.</dd>
+
+<dt>delimiter</dt>
+<dd>The key delimiter can be specified, this is needed when there are '.' values contained within the expected 
+array keys already</dd>
+</dl>
+
+#### Return Values
+
+There is no return for this method, the array is passed by reference and is updated with the inserted value.
+
+#### Examples
+
+##### Example #1 insert with an existing value
+
+```php
+<?php
+$test = array (
+    'a' => array (
+        'b' => array (
+            'c' => 'd'
+            )
+        )
+    );
+
+Dot::append($test, 'a.b.c', 'e');
+var_export($test);
+```
+
+```shell
+array (
+  'a' => 
+  array (
+    'b' => 
+    array (
+      'c' => 
+      array (
+        0 => 'd',
+        1 => 'e',
+      ),
+    ),
+  ),
+)
+```
+
+##### Example #2 setting the key and creating an initial array
+
+```php
+<?php
+$test = array (
+    'a' => array (
+        'b' => array ()
+        )
+    );
+
+Dot::append($test, 'a.b.c', 'd');
+
+var_export($test);
+```
+
+```shell
+array (
+  'a' => 
+  array (
+    'b' => 
+    array (
+      'c' => 
+      array (
+        0 => 'd',
+      ),
+    ),
+  ),
+)
+```
+
+### `Dot::delete()`
+
+The `Dot::delete()` method will unset the key location provided.  If the key location is not in the array there will be no effect on the passed array. This
+method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
+need to search further down than 100 levels this likely is the wrong tool to utilize.
+
+#### Description
+
+```
+Dot::delete(array &$setArray, string $setKey, string $delimiter = '.'): void
+```
+
+#### Parameters
+
+<dl>
+<dt>setArray</dt>
+<dd>The array that will the value will be placed inside</dd>
+
+<dt>setKey</dt>
+<dd>The delimited key that will be searched for in the provided searchArray.  If the array does not have string 
+keys number strings can be used instead to access the appropriate position in the array</dd>
+
+<dt>delimiter</dt>
+<dd>The key delimiter can be specified, this is needed when there are '.' values contained within the expected 
+array keys already</dd>
+</dl>
+
+#### Return Values
+
+There is no return for this method, the array is passed by reference and is updated.
+
+#### Examples
+
+##### Example #1 simple key value unset
+
+```php
+<?php
+$test = array (
+    'a' => array (
+        'b' => array (
+            'c' => array (
+                'd',
+                'e',
+                'f'
+                )
+            )
+        )
+    );
+
+Dot::delete($test, 'a.b.c');
+var_export($test);
+```
+
+```shell
+array (
+  'a' => 
+  array (
+    'b' => 
+    array (
+    ),
+  ),
+)
+```
+
 ### `Dot::count()`
 
 The `Dot::count()` method will set the passed value inside the provided array at the location of the key provided.  
@@ -282,7 +445,7 @@ need to search further down than 100 levels this likely is the wrong tool to uti
 #### Description
 
 ```
-Dot::set(array &$setArray, string $setKey, string $delimiter = '.', int $return = Dot::ZERO_ON_NON_ARRAY): int
+Dot::count(array &$setArray, string $setKey, string $delimiter = '.', int $return = Dot::ZERO_ON_NON_ARRAY): int
 ```
 
 #### Parameters
