@@ -1,10 +1,10 @@
-<h1 style="text-align: center">ryanwhowe/dot</h1>
+<h1 align="center">ryanwhowe/dot</h1>
 
-<p style="text-align: center">
+<p align="center">
     <strong>A PHP library to access and set array values using dot notation or any other key separator.</strong>
 </p>
 
-<p style="text-align: center">
+<p align="center">
     <a href="https://github.com/ryanwhowe/dot"><img src="https://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
      <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
     <a href="https://github.com/ryanwhowe/dot/blob/1.x/LICENSE"><img src="https://img.shields.io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
