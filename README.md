@@ -42,7 +42,9 @@ The Dot class contains static methods to facilitate the safe access, setting, un
 
 ### `Dot::has()`
 
-The `Dot::has()` checks to see if there is a value in the search array for the search key.
+The `Dot::has()` checks to see if there is a value in the search array for the search key. This method utilizes
+recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to search
+further down than 100 levels this likely is the wrong tool to utilize.
 
 #### Description
 
@@ -105,7 +107,7 @@ false
 
 ### `Dot::get()`
 
-The `Dot::get()` method is get getting data from an array provided that there is a key that exists in the search
+The `Dot::get()` method is for getting data from an array provided that there is a key that exists in the search
 location, if there is not, then return a default value instead. This method utilizes recursion to traverse the array.
 Most installations of php have a recursion depth limit of 100, if you need to search further down than 100 levels this
 likely is the wrong tool to utilize.
@@ -282,17 +284,17 @@ need to search further down than 100 levels this likely is the wrong tool to uti
 #### Description
 
 ```
-Dot::append(array &$setArray, string $setKey, mixed $value, string $delimiter = '.'): void
+Dot::append(array &$appendArray, string $appendKey, mixed $value, string $delimiter = '.'): void
 ```
 
 #### Parameters
 
 <dl>
-<dt>setArray</dt>
-<dd>The array that will the value will be placed inside</dd>
+<dt>appendArray</dt>
+<dd>The array that will the value will be placed inside the array in the position of the appendKey.</dd>
 
-<dt>setKey</dt>
-<dd>The delimited key that will be searched for in the provided searchArray.  If the array does not have string 
+<dt>appendKey</dt>
+<dd>The delimited key that will be searched for in the provided appendArray.  If the array does not have string 
 keys number strings can be used instead to access the appropriate position in the array</dd>
 
 <dt>value</dt>
@@ -380,17 +382,17 @@ need to search further down than 100 levels this likely is the wrong tool to uti
 #### Description
 
 ```
-Dot::delete(array &$setArray, string $setKey, string $delimiter = '.'): void
+Dot::delete(array &$deleteArray, string $deleteKey, string $delimiter = '.'): void
 ```
 
 #### Parameters
 
 <dl>
-<dt>setArray</dt>
-<dd>The array that will the value will be placed inside</dd>
+<dt>deleteArray</dt>
+<dd>The array that will the value will have a value unset from it, is in the deleteKey is in the array.</dd>
 
-<dt>setKey</dt>
-<dd>The delimited key that will be searched for in the provided searchArray.  If the array does not have string 
+<dt>deleteKey</dt>
+<dd>The delimited key that will be searched for in the provided deleteArray.  If the array does not have string 
 keys number strings can be used instead to access the appropriate position in the array</dd>
 
 <dt>delimiter</dt>
@@ -437,10 +439,11 @@ array (
 
 ### `Dot::count()`
 
-The `Dot::count()` method will set the passed value inside the provided array at the location of the key provided.  
-The set method will create the key structure needed to place the value in the array if it is not present already This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The `Dot::count()` method will generate a count of the elements in the location of the key provided. If the value at the
+location of the key proivided is not an array (or there is no value at the provided key) by default the method will
+return 0. This behavior can be changed to return a -1 instead when there is no value or a non array value. This method
+utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to
+search further down than 100 levels this likely is the wrong tool to utilize.
 
 #### Description
 
