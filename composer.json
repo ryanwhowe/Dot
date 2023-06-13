@@ -33,24 +33,31 @@
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "*",
-        "phpstan/phpstan": "^1.4"
+        "phpstan/phpstan": "^1.4",
+        "vimeo/psalm": "^4.30"
     },
     "scripts": {
         "analyze": [
-            "@phpstan"
+            "@phpstan",
+            "@psalm"
         ],
         "phpstan": [
             "phpstan analyse src/ tests/ --no-progress --memory-limit=1G --level 8"
         ],
+        "psalm": [
+            "psalm"
+        ],
         "phpunit": "phpunit --verbose --colors=always",
         "tests": [
             "@phpstan",
+            "@psalm",
             "@phpunit"
         ]
     },
     "scripts-descriptions": {
         "analyze": "Run All project static analysis scripts",
         "phpstan": "Run PHPStan against the project code on level 8",
+        "psalm": "Run psalm against the project code",
         "phpunit": "Run PHPUnit tests",
         "tests": "Run the static analysis and unit tests"
     }
