@@ -1,8 +1,6 @@
 FROM php:7.1-fpm-buster
 
-RUN apt-get update
-
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     unzip \
     zlib1g-dev \
