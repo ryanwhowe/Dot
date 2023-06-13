@@ -23,9 +23,16 @@ Q: There are quite a few 'dot' projects that exist on Packagist, what is differe
 
 Q: Why add this to Packagist?
 >
-> This package has been used on several of my projects both personally and professionally and I am tired of copying
+> This package has been used on several of my projects both personally and professionally, and I am tired of copying
 > the class from one project to another. If my teams and I get usage out of this project, I wanted to share it to
 > allow anyone else who this could help use it as well.
+
+## Compatability
+
+If you are still working on php 5.6, please use the `1.x` branch, I will try and keep that patched with any non-breaking
+changes and/or bug fixes that are found. But with [Semantic Versioning][] there will be no backwards incompatible
+releases made to the branch and there are no plans for another major version that supports php 5.6. I will however try
+and backport any major functionality or feature additions to the `1.x` branch.
 
 ## Installation
 
@@ -595,3 +602,5 @@ array (
 ```
 
 [composer]: http://getcomposer.org/
+
+[semantic versioning]: https://semver.org/spec/v2.0.0.html

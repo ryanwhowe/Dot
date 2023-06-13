@@ -60,7 +60,7 @@ class Dot {
      * @throws InvalidArgumentException if an invalid delimiter is used
      * @return void
      */
-    public static function set(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER) {
+    public static function set(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER): void {
         self::validateDelimiter($delimiter);
         $keys = explode($delimiter, $key);
         $key_pos = array_shift($keys);
@@ -104,7 +104,7 @@ class Dot {
      * @throws InvalidArgumentException if an invalid delimiter is used
      * @return int
      */
-    public static function count(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER, int $return = self::ZERO_ON_NON_ARRAY) {
+    public static function count(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER, int $return = self::ZERO_ON_NON_ARRAY): int {
         self::validateDelimiter($delimiter);
         $default = (self::NEGATIVE_ON_NON_ARRAY === $return) ? -1 : 0;
         $position = self::get($array, $key, '', $delimiter);
@@ -124,7 +124,7 @@ class Dot {
      * @throws InvalidArgumentException if an invalid deliminator is used
      * @return void
      */
-    public static function append(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER) {
+    public static function append(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER): void {
         self::validateDelimiter($delimiter);
         $current = self::get($array, $key, [], $delimiter);
         $current = (is_array($current)) ? $current : [$current];
@@ -141,7 +141,7 @@ class Dot {
      *
      * @return void
      */
-    public static function delete(array &$array, string $key, string $delimiter = self::DEFAULT_DELIMITER) {
+    public static function delete(array &$array, string $key, string $delimiter = self::DEFAULT_DELIMITER): void {
         self::validateDelimiter($delimiter);
 
         if (!self::has($array, $key)) {
