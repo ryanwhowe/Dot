@@ -52,6 +52,20 @@ class DotTest extends TestCase {
 
     /**
      * @test
+     * @dataProvider dotCountDataProvider
+     * @param mixed[] $test
+     * @param non-empty-string $key
+     * @param int $expected
+     * @param non-empty-string $delimiter
+     * @return void
+     */
+    public function dotCount(array $test, $key, $expected, $delimiter = Dot::DEFAULT_DELIMITER, $return = Dot::ZERO_ON_NON_ARRAY) {
+        $actual = Dot::count($test, $key, $delimiter, $return);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @test
      * @dataProvider flattenDataProvider
      * @param mixed[] $test
      * @param array<non-empty-string, mixed> $expected
@@ -163,6 +177,66 @@ class DotTest extends TestCase {
     public function flattenEmptyStringFailure(string $deliminator) {
         $this->expectException(InvalidArgumentException::class);
         Dot::flatten([], $deliminator);
+    }
+
+    /**
+     * @test
+     * @dataProvider appendDataProvider
+     * @param array $array
+     * @param $key
+     * @param $value
+     * @param $expected
+     * @return void
+     */
+    public function append(array $array, $key, $value, $expected){
+        Dot::append($array, $key, $value);
+        $this->assertEquals($expected, $array);
+    }
+
+    /**
+     * @test
+     * @dataProvider deleteDataProvider
+     * @param array $array
+     * @param       $key
+     * @param       $expected
+     * @param       $delimiter
+     *
+     * @return void
+     */
+    public function dotDelete(array $array, $key, $expected, $delimiter = Dot::DEFAULT_DELIMITER ) {
+        Dot::delete($array, $key, $delimiter);
+        $this->assertEquals($expected, $array);
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function deleteDataProvider() {
+        return [
+            'delete a value' => [['a'=>['b'=>['c'=>'d']]], 'a.b.c', ['a'=>['b'=>[]]]],
+            'delete a value in set' => [['a'=>['b'=>['c'=>'d', 'e'=>'f']]], 'a.b.e', ['a'=>['b'=>['c'=>'d']]]],
+            'delete a value in mixed set' => [['a'=>['b'=>['c'=>'d', 'e'=>'f', 'g' => ['h'=>'i']]]], 'a.b.e', ['a'=>['b'=>['c'=>'d', 'g' => ['h'=>'i']]]]],
+            'delete a array' => [['a'=>['b'=>['c'=>'d']]], 'a.b', ['a'=>[]]],
+            'no key found' => [['a'=>['b'=>['c'=>'d']]], 'a.b.c.e', ['a'=>['b'=>['c'=>'d']]]],
+        ];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function appendDataProvider() {
+        return [
+            'append to array' => [['test' => ['test1']], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to string value' => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to int value' => [['test' => 'test1'], 'test', 1, ['test' => ['test1', 1]]],
+            'append to float value' => [['test' => 'test1'], 'test', 1.1, ['test' => ['test1', 1.1]]],
+            'append to bool value' => [['test' => 'test1'], 'test', false, ['test' => ['test1', false]]],
+            'append to null value' => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
+            'append to arrays' => [['test' => ['test1' => ['test3']]], 'test', 'test2', ['test' => ['test1' => ['test3'], 'test2']]],
+            'append to nothing' => [[], 'test', 'test1', ['test' => ['test1']]],
+            'append to deep array' => [['test' => ['test1' => ['test2' => ['test3']]]], 'test.test1.test2', 'test4', ['test' => ['test1' => ['test2' => ['test3', 'test4']]]]],
+            'append to key value array' => [['test'=>['test1'=>['test3' => 'test4']]],'test.test1', 'test5', ['test'=>['test1'=>['test3' => 'test4', 'test5']]]],
+        ];
     }
 
     /**
@@ -319,6 +393,28 @@ class DotTest extends TestCase {
             'multiple level not present custom delim' => [$base_search_array, 'test1~notthere', false, '~'],
             'multiple level many not present custom delim' => [$base_search_array, 'test1~test1~blah1~blah2~blah3~blah4~blah5', false, '~'],
 
+        ];
+    }
+
+    /**
+     * @return mixed[]
+     */
+    public static function dotCountDataProvider() {
+        return [
+            'empty array' => [[], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'string value test' => [['a' => ''], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'int value test' => [['a' => 123], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'float value test' => [['a' => 12.3], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'bool value test' => [['a' => false], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'empty array zero return' => [[], 'a', 0],
+            'string value test zero return' => [['a' => ''], 'a', 0],
+            'int value test zero return' => [['a' => 123], 'a', 0],
+            'float value test, zero return' => [['a' => 12.3], 'a', 0],
+            'bool value test zero return' => [['a' => false], 'a', 0],
+            'empty array value test' => [['a' => []], 'a', 0],
+            'single value test' => [['a' => ['b']], 'a', 1],
+            'multi value test' => [['a' => ['b', 'c', 'd']], 'a', 3],
+            'delimiter test' => [['a' => ['b' => ['c', 'd', 'e', 'f']]], 'a~b', 4, '~']
         ];
     }
 
