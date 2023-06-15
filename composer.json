@@ -23,18 +23,18 @@
     ],
     "autoload-dev": {
         "psr-4": {
-            "Ryanwhowe\\Dot\\Tests\\": "tests/"
+            "Ryanwhowe\\Dot\\Test\\": "tests/"
         }
     },
     "require": {
-        "php": "^7.1"
+        "php": "^8.0"
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require-dev": {
         "phpunit/phpunit": "*",
-        "phpstan/phpstan": "^1.4",
-        "vimeo/psalm": "^4.30"
+        "phpstan/phpstan": "*",
+        "vimeo/psalm": "*"
     },
     "scripts": {
         "analyze": [

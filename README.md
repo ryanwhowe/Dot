@@ -34,6 +34,9 @@ changes and/or bug fixes that are found. But with [Semantic Versioning][] there 
 releases made to the branch and there are no plans for another major version that supports php 5.6. I will however try
 and backport any major functionality or feature additions to the `1.x` branch.
 
+The `2.x` branch has the php ^7.1 support if you require that for your project. As with the `1.x` branch I will keep
+that patched with any non-breaking changes and/or bugs that are found.
+
 ## Installation
 
 The preferred method of installation is via [Composer][]. Run the following command to install the package and add it as

@@ -5,11 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 3.0.0 - 2023-06-15
 
-* There will be a 3.x branch created for php 8.0, there is little differences between the functionality of the different
-  version of the package. The primary difference is the supported versions which have to do with the development of the
-  package and the dev dependencies.
+### Changed
+
+* Require php `^8.0`
+* Updated Exceptions thrown. All Exceptions are extended from the `ryanwhowe\Dot\Exceptions\DotException` class which is
+  extended from the base `\RuntimeExpection` class.
+* Dot::get() can now
 
 ## 2.0.0 - 2023-06-15
 

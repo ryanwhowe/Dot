@@ -3,8 +3,9 @@
 namespace Ryanwhowe\Dot\Test;
 
 use Ryanwhowe\Dot\Dot;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
+use Ryanwhowe\Dot\Exception\ArrayKeyNotSetException;
+use Ryanwhowe\Dot\Exception\InvalidDelimiterException;
 
 class DotTest extends TestCase {
 
@@ -19,7 +20,7 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function set(array $test, string $key, $value, array $expected) {
+    public function set(array $test, string $key, mixed $value, array $expected) {
         Dot::set($test, $key, $value);
         $this->assertEquals($expected, $test);
     }
@@ -35,8 +36,12 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function get(array $test, string $key, $expected, $default = null) {
-        $actual = Dot::get($test, $key, $default, Dot::DEFAULT_DELIMITER);
+    public function get(array $test, string $key, mixed $expected, mixed $default = null, string $delimiter = Dot::DEFAULT_DELIMITER, int $missingKeyException = 0) {
+        if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
+            $this->expectException(ArrayKeyNotSetException::class);
+            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+        }
+        $actual = Dot::get($test, $key, $default, $delimiter, $missingKeyException);
         $this->assertEquals($expected, $actual);
     }
 
@@ -68,8 +73,12 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function dotCount(array $test, string $key, int $expected, string $delimiter = Dot::DEFAULT_DELIMITER, int $return = Dot::ZERO_ON_NON_ARRAY) {
-        $actual = Dot::count($test, $key, $delimiter, $return);
+    public function dotCount(array $test, string $key, int $expected, string $delimiter = Dot::DEFAULT_DELIMITER, int $return = Dot::ZERO_ON_NON_ARRAY, int $missingKeyException = 0) {
+        if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
+            $this->expectException(ArrayKeyNotSetException::class);
+            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+        }
+        $actual = Dot::count($test, $key, $delimiter, $return, $missingKeyException);
         $this->assertEquals($expected, $actual);
     }
 
@@ -103,7 +112,7 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function setCustomDelimiter(array $test, string $key, $value, array $expected) {
+    public function setCustomDelimiter(array $test, string $key, mixed $value, array $expected) {
 
         $custom_delimiter = '~';
         $key = str_replace('.', $custom_delimiter, $key);
@@ -123,11 +132,12 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function getCustomDelimiter(array $test, string $key, $expected, $default = null) {
-        $custom_delimiter = '~';
-        $key = str_replace('.', $custom_delimiter, $key);
-
-        $actual = Dot::get($test, $key, $default, $custom_delimiter);
+    public function getCustomDelimiter(array $test, string $key, mixed $expected, mixed $default = null, string $delimiter = Dot::DEFAULT_DELIMITER, int $missingKeyException = 0) {
+        if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
+            $this->expectException(ArrayKeyNotSetException::class);
+            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+        }
+        $actual = Dot::get($test, $key, $default, $delimiter, $missingKeyException);
         $this->assertEquals($expected, $actual);
     }
 
@@ -160,7 +170,7 @@ class DotTest extends TestCase {
      * @dataProvider invalidDelimiterDataProvider
      */
     public function getEmptyStringFailure(string $deliminator) {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidDelimiterException::class);
         Dot::get([], 'test.test', null, $deliminator);
     }
 
@@ -173,7 +183,7 @@ class DotTest extends TestCase {
      * @dataProvider invalidDelimiterDataProvider
      */
     public function setEmptyStringFailure(string $deliminator) {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidDelimiterException::class);
         $test = [];
         Dot::set($test, 'test.test', 'test', $deliminator);
     }
@@ -187,7 +197,7 @@ class DotTest extends TestCase {
      * @return void
      */
     public function hasEmptyStringFailure(string $deliminator) {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidDelimiterException::class);
         Dot::has([], 'test.test', $deliminator);
     }
 
@@ -200,7 +210,7 @@ class DotTest extends TestCase {
      * @return void
      */
     public function flattenEmptyStringFailure(string $deliminator) {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidDelimiterException::class);
         Dot::flatten([], $deliminator);
     }
 
@@ -215,7 +225,7 @@ class DotTest extends TestCase {
      *
      * @return void
      */
-    public function append(array $array, string $key, $value, array $expected) {
+    public function append(array $array, string $key, mixed $value, array $expected) {
         Dot::append($array, $key, $value);
         $this->assertEquals($expected, $array);
     }
@@ -357,25 +367,42 @@ class DotTest extends TestCase {
         return [
             'first level test' => [$base_search_array, 'test1', ['test1' => 'test1.test1']],
 
-            'second level test'     => [$base_search_array, 'test1.test1', 'test1.test1'],
+            'second level test' => [$base_search_array, 'test1.test1', 'test1.test1'],
             'second level test not' => [$base_search_array, 'test2.test2', "\0"],
+            'second level test missing' => [$base_search_array, 'test1.test2', ''],
 
-            'results type check, int'        => [$base_search_array, 'test3.int', 1],
-            'results type check, float'      => [$base_search_array, 'test3.float', 1.1],
-            'results type check, bool true'  => [$base_search_array, 'test3.true', true],
+            'results type check, int' => [$base_search_array, 'test3.int', 1],
+            'results type check, float' => [$base_search_array, 'test3.float', 1.1],
+            'results type check, bool true' => [$base_search_array, 'test3.true', true],
             'results type check, bool false' => [$base_search_array, 'test3.false', false],
-            'results type check, string'     => [$base_search_array, 'test3.string', 'string'],
+            'results type check, string' => [$base_search_array, 'test3.string', 'string'],
 
             'key not found test, default default' => [$base_search_array, 'notthere', null],
 
-            'key not found test, int default'    => [$base_search_array, 'notthere', 0, 0],
-            'key not found test, false default'  => [$base_search_array, 'notthere', false, false],
-            'key not found test, true default'   => [$base_search_array, 'notthere', true, true],
-            'key not found test, float default'  => [$base_search_array, 'notthere', 1.1, 1.1],
+            'key not found test, int default' => [$base_search_array, 'notthere', 0, 0],
+            'key not found test, false default' => [$base_search_array, 'notthere', false, false],
+            'key not found test, true default' => [$base_search_array, 'notthere', true, true],
+            'key not found test, float default' => [$base_search_array, 'notthere', 1.1, 1.1],
             'key not found test, string default' => [$base_search_array, 'notthere', 'nonya', 'nonya'],
 
-            'mixed key types'           => [$base_search_array, 'test4.0.test4.0', 'test4'],
+            'mixed key types' => [$base_search_array, 'test4.0.test4.0', 'test4'],
             'mixed key types multi int' => [$base_search_array, 'test5.0.test5.0.0', 'test5'],
+
+            'missing middle' => [$base_search_array, 'test4.0.test4.0.1.2.3.4', '', '', Dot::DEFAULT_DELIMITER],
+            'delimiter changed ~ missing middle' => [$base_search_array, 'test5~0~test5~0~0~1~2~3~4', "\0", "\0", '~'],
+
+            'delimiter changed | ' => [$base_search_array, 'test4|0|test4|0', 'test4', "\0", '|'],
+            'delimiter changed ~' => [$base_search_array, 'test5~0~test5~0~0', 'test5', "\0", '~'],
+
+            'mixed key types with exception' => [$base_search_array, 'test4.0.test4.4', '', '', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'mixed key types multi int with exception' => [$base_search_array, 'test5.0.test5.0.4', '', '', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'delimiter changed | with exception' => [$base_search_array, 'test4|0|test4|4', "\0", "no", '|', Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'delimiter changed ~ with exception' => [$base_search_array, 'test5~0~test5~0~4', "\0", "no", '~', Dot::ARRAY_KEY_MISSING_EXCEPTION],
+
+            'mixed key types with exception missing middle' => [$base_search_array, 'test4.0.test4.0.1.2.3.4', '', '', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'mixed key types multi int with exception missing middle' => [$base_search_array, 'test5.0.test5.0.0.1.2.3.4', '', '', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'delimiter changed | with exception missing middle' => [$base_search_array, 'test4|0|test4|4|0|1|2|3|4', "\0", "no", '|', Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'delimiter changed ~ with exception missing middle' => [$base_search_array, 'test5~0~test5~0~0~1~2~3~4', "\0", "no", '~', Dot::ARRAY_KEY_MISSING_EXCEPTION],
         ];
     }
 
@@ -429,20 +456,27 @@ class DotTest extends TestCase {
      */
     public static function dotCountDataProvider() {
         return [
-            'empty array'                   => [[], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
-            'string value test'             => [['a' => ''], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
-            'int value test'                => [['a' => 123], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
-            'float value test'              => [['a' => 12.3], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
-            'bool value test'               => [['a' => false], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
-            'empty array zero return'       => [[], 'a', 0],
+            'empty array' => [[], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'string value test' => [['a' => ''], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'int value test' => [['a' => 123], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'float value test' => [['a' => 12.3], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'bool value test' => [['a' => false], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY],
+            'empty array zero return' => [[], 'a', 0],
             'string value test zero return' => [['a' => ''], 'a', 0],
-            'int value test zero return'    => [['a' => 123], 'a', 0],
+            'int value test zero return' => [['a' => 123], 'a', 0],
             'float value test, zero return' => [['a' => 12.3], 'a', 0],
-            'bool value test zero return'   => [['a' => false], 'a', 0],
-            'empty array value test'        => [['a' => []], 'a', 0],
-            'single value test'             => [['a' => ['b']], 'a', 1],
-            'multi value test'              => [['a' => ['b', 'c', 'd']], 'a', 3],
-            'delimiter test'                => [['a' => ['b' => ['c', 'd', 'e', 'f']]], 'a~b', 4, '~'],
+            'bool value test zero return' => [['a' => false], 'a', 0],
+            'empty array value test' => [['a' => []], 'a', 0],
+            'single value test' => [['a' => ['b']], 'a', 1],
+            'multi value test' => [['a' => ['b', 'c', 'd']], 'a', 3],
+            'delimiter test' => [['a' => ['b' => ['c', 'd', 'e', 'f']]], 'a~b', 4, '~'],
+
+            'empty array with exception' => [[], 'a', -1, Dot::DEFAULT_DELIMITER, Dot::NEGATIVE_ON_NON_ARRAY, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'empty array zero return with exception' => [[], 'a', 0, Dot::DEFAULT_DELIMITER, Dot::ZERO_ON_NON_ARRAY, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+
+            'delimiter empty array with exception' => [[], 'a', -1, '~', Dot::NEGATIVE_ON_NON_ARRAY, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+            'delimiter empty array zero return with exception' => [[], 'a', 0, '~', Dot::ZERO_ON_NON_ARRAY, Dot::ARRAY_KEY_MISSING_EXCEPTION],
+
         ];
     }
 
