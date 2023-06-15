@@ -71,7 +71,6 @@ class Dot {
         } else {
             $array[$key_pos] = $value;
         }
-
     }
 
     /**

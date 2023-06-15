@@ -602,5 +602,4 @@ array (
 ```
 
 [composer]: http://getcomposer.org/
-
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
