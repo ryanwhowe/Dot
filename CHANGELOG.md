@@ -22,13 +22,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * Require php `^7.1` (#4)
 
-### Depreciated
-
-* The methods verify that the delimiter is a non-zero-length string and if not throw an `\InvalidArgumentException`.
-  Future versions will alter the exception thrown to a custom exception from the package which will be extended from a
-  generic `\Exception`. To maintain compatibility if wrapping `Dot` calls in a try catch, catch an `\Exception` class
-  instead of the `\InvalidArgumentException` class
-
 ## 1.1.0 - 2023-06-13
 
 ### Added
