@@ -38,7 +38,7 @@ The `2.x` branch has the php ^7.1 support if you require that for your project. 
 that patched with any non-breaking changes and/or bugs that are found.
 
 >
-> <font color="red">Warning:</font> When you have xDebug enabled the recursion depth is set to 100, however the PHP
+> Warning: When you have xDebug enabled the recursion depth is set to 100, however the PHP
 > [manual][] advises against doing 100-200 recursion levels as it can smash the stack and cause termination of the
 > current
 > script. This class utilizes recursion to traverse the array. If you need to traverse an array with depth deeper than
