@@ -12,7 +12,7 @@ use Ryanwhowe\Dot\Exception\InvalidDelimiterException;
 class Dot {
 
     /**
-     * The default delimiter for separating keys
+     * The default delimiter for separating keys is a period character, but any string that explode() will support can be utilized
      */
     const DEFAULT_DELIMITER = '.';
 
@@ -27,10 +27,13 @@ class Dot {
     const NEGATIVE_ON_NON_ARRAY = 2;
 
     /**
-     * When the :count() method runs, if the value in the searchKey location is not an array, return 0
+     * Several methods can be set to throw an ArrayKeyNotSetException if an array key is not set in the target array
      */
     const ARRAY_KEY_MISSING_EXCEPTION = 1;
 
+    /**
+     * @var string|null This stores the original search key before the recursive search traverses the array.
+     */
     private static ?string $searchKey = null;
 
     /**
@@ -130,7 +133,7 @@ class Dot {
         try {
             $v = self::get($array, $key, $default, $delimiter);
         } catch (ArrayKeyNotSetException) {
-            $v = $default;
+            $v = $default; // this should not execute
         }
         return ($v !== $default); // if the default value is returned then the key was not found
     }

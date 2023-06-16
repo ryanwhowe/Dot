@@ -15,6 +15,6 @@ class ArrayKeyNotSetException extends DotException {
      * @param Throwable|null $previous
      */
     public function __construct(string $arrayKey = "", int $code = 0, ?Throwable $previous = null) {
-        parent::__construct("The arrayKey, '${arrayKey}' is not set in the source array.", $code, $previous);
+        parent::__construct("The arrayKey, '{$arrayKey}' is not set in the source array.", $code, $previous);
     }
 }

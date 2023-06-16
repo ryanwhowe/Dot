@@ -33,13 +33,15 @@ class DotTest extends TestCase {
      * @param non-empty-string $key
      * @param array|mixed|null $expected
      * @param mixed|null       $default
+     * @param non-empty-string $delimiter
+     * @param int              $missingKeyException
      *
      * @return void
      */
     public function get(array $test, string $key, mixed $expected, mixed $default = null, string $delimiter = Dot::DEFAULT_DELIMITER, int $missingKeyException = 0) {
         if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
             $this->expectException(ArrayKeyNotSetException::class);
-            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+            $this->expectExceptionMessage("The arrayKey, '{$key}' is not set in the source array.");
         }
         $actual = Dot::get($test, $key, $default, $delimiter, $missingKeyException);
         $this->assertEquals($expected, $actual);
@@ -76,7 +78,7 @@ class DotTest extends TestCase {
     public function dotCount(array $test, string $key, int $expected, string $delimiter = Dot::DEFAULT_DELIMITER, int $return = Dot::ZERO_ON_NON_ARRAY, int $missingKeyException = 0) {
         if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
             $this->expectException(ArrayKeyNotSetException::class);
-            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+            $this->expectExceptionMessage("The arrayKey, '{$key}' is not set in the source array.");
         }
         $actual = Dot::count($test, $key, $delimiter, $return, $missingKeyException);
         $this->assertEquals($expected, $actual);
@@ -129,13 +131,15 @@ class DotTest extends TestCase {
      * @param non-empty-string $key
      * @param array|mixed|null $expected
      * @param mixed|null       $default
+     * @param non-empty-string $delimiter
+     * @param int              $missingKeyException
      *
      * @return void
      */
     public function getCustomDelimiter(array $test, string $key, mixed $expected, mixed $default = null, string $delimiter = Dot::DEFAULT_DELIMITER, int $missingKeyException = 0) {
         if (Dot::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
             $this->expectException(ArrayKeyNotSetException::class);
-            $this->expectExceptionMessage("The arrayKey, '${key}' is not set in the source array.");
+            $this->expectExceptionMessage("The arrayKey, '{$key}' is not set in the source array.");
         }
         $actual = Dot::get($test, $key, $default, $delimiter, $missingKeyException);
         $this->assertEquals($expected, $actual);
@@ -251,11 +255,11 @@ class DotTest extends TestCase {
      */
     public static function deleteDataProvider() {
         return [
-            'delete a value'              => [['a' => ['b' => ['c' => 'd']]], 'a.b.c', ['a' => ['b' => []]]],
-            'delete a value in set'       => [['a' => ['b' => ['c' => 'd', 'e' => 'f']]], 'a.b.e', ['a' => ['b' => ['c' => 'd']]]],
+            'delete a value' => [['a' => ['b' => ['c' => 'd']]], 'a.b.c', ['a' => ['b' => []]]],
+            'delete a value in set' => [['a' => ['b' => ['c' => 'd', 'e' => 'f']]], 'a.b.e', ['a' => ['b' => ['c' => 'd']]]],
             'delete a value in mixed set' => [['a' => ['b' => ['c' => 'd', 'e' => 'f', 'g' => ['h' => 'i']]]], 'a.b.e', ['a' => ['b' => ['c' => 'd', 'g' => ['h' => 'i']]]]],
-            'delete a array'              => [['a' => ['b' => ['c' => 'd']]], 'a.b', ['a' => []]],
-            'no key found'                => [['a' => ['b' => ['c' => 'd']]], 'a.b.c.e', ['a' => ['b' => ['c' => 'd']]]],
+            'delete a array' => [['a' => ['b' => ['c' => 'd']]], 'a.b', ['a' => []]],
+            'no key found' => [['a' => ['b' => ['c' => 'd']]], 'a.b.c.e', ['a' => ['b' => ['c' => 'd']]]],
         ];
     }
 
@@ -264,15 +268,15 @@ class DotTest extends TestCase {
      */
     public static function appendDataProvider() {
         return [
-            'append to array'           => [['test' => ['test1']], 'test', 'test2', ['test' => ['test1', 'test2']]],
-            'append to string value'    => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
-            'append to int value'       => [['test' => 'test1'], 'test', 1, ['test' => ['test1', 1]]],
-            'append to float value'     => [['test' => 'test1'], 'test', 1.1, ['test' => ['test1', 1.1]]],
-            'append to bool value'      => [['test' => 'test1'], 'test', false, ['test' => ['test1', false]]],
-            'append to null value'      => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
-            'append to arrays'          => [['test' => ['test1' => ['test3']]], 'test', 'test2', ['test' => ['test1' => ['test3'], 'test2']]],
-            'append to nothing'         => [[], 'test', 'test1', ['test' => ['test1']]],
-            'append to deep array'      => [['test' => ['test1' => ['test2' => ['test3']]]], 'test.test1.test2', 'test4', ['test' => ['test1' => ['test2' => ['test3', 'test4']]]]],
+            'append to array' => [['test' => ['test1']], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to string value' => [['test' => 'test1'], 'test', 'test2', ['test' => ['test1', 'test2']]],
+            'append to int value' => [['test' => 'test1'], 'test', 1, ['test' => ['test1', 1]]],
+            'append to float value' => [['test' => 'test1'], 'test', 1.1, ['test' => ['test1', 1.1]]],
+            'append to bool value' => [['test' => 'test1'], 'test', false, ['test' => ['test1', false]]],
+            'append to null value' => [['test' => 'test1'], 'test', null, ['test' => ['test1', null]]],
+            'append to arrays' => [['test' => ['test1' => ['test3']]], 'test', 'test2', ['test' => ['test1' => ['test3'], 'test2']]],
+            'append to nothing' => [[], 'test', 'test1', ['test' => ['test1']]],
+            'append to deep array' => [['test' => ['test1' => ['test2' => ['test3']]]], 'test.test1.test2', 'test4', ['test' => ['test1' => ['test2' => ['test3', 'test4']]]]],
             'append to key value array' => [['test' => ['test1' => ['test3' => 'test4']]], 'test.test1', 'test5', ['test' => ['test1' => ['test3' => 'test4', 'test5']]]],
         ];
     }
@@ -282,22 +286,22 @@ class DotTest extends TestCase {
      */
     public static function setDataProvider() {
         return [
-            'single dimension set'    => [['test' => 'test'], 'test', 'new', ['test' => 'new']],
+            'single dimension set' => [['test' => 'test'], 'test', 'new', ['test' => 'new']],
             'single dimension create' => [[], 'test', 'new', ['test' => 'new']],
 
-            'multi dimension set'         => [['test' => ['test' => 'test']], 'test.test', 'new', ['test' => ['test' => 'new']]],
+            'multi dimension set' => [['test' => ['test' => 'test']], 'test.test', 'new', ['test' => ['test' => 'new']]],
             'multi dimension set non key' => [['test' => ['test']], 'test.0', 'new', ['test' => ['new']]],
 
-            'multi dimension create'         => [[], 'test.test', 'new', ['test' => ['test' => 'new']]],
+            'multi dimension create' => [[], 'test.test', 'new', ['test' => ['test' => 'new']]],
             'multi dimension create non key' => [[], 'test.0', 'new', ['test' => ['new']]],
 
-            'multi dimension multi non key set'         => [
+            'multi dimension multi non key set' => [
                 ['test' => [['test']]],
                 'test.0.0',
                 'new',
                 ['test' => [['new']]],
             ],
-            'multi dimension multi non key create'      => [
+            'multi dimension multi non key create' => [
                 [],
                 'test.0.0',
                 'new',
@@ -310,13 +314,13 @@ class DotTest extends TestCase {
                 ['test' => [['new']]],
             ],
 
-            'multi dimension multi mixed set'         => [
+            'multi dimension multi mixed set' => [
                 ['test' => [['test' => 'test']]],
                 'test.0.test',
                 'new',
                 ['test' => [['test' => 'new']]],
             ],
-            'multi dimension multi mixed create'      => [
+            'multi dimension multi mixed create' => [
                 [],
                 'test.0.test',
                 'new',
@@ -344,11 +348,11 @@ class DotTest extends TestCase {
                 'test2' => "\0",
             ],
             'test3' => [
-                'int'    => 1,
-                'float'  => 1.1,
+                'int' => 1,
+                'float' => 1.1,
                 'string' => 'string',
-                'true'   => true,
-                'false'  => false,
+                'true' => true,
+                'false' => false,
             ],
             'test4' => [
                 [
@@ -418,11 +422,11 @@ class DotTest extends TestCase {
                 'test2' => "\0",
             ],
             'test3' => [
-                'int'    => 1,
-                'float'  => 1.1,
+                'int' => 1,
+                'float' => 1.1,
                 'string' => 'string',
-                'true'   => true,
-                'false'  => false,
+                'true' => true,
+                'false' => false,
             ],
             'test4' => [
                 [
@@ -439,13 +443,13 @@ class DotTest extends TestCase {
         ];
 
         return [
-            'single level present'     => [$base_search_array, 'test1', true],
+            'single level present' => [$base_search_array, 'test1', true],
             'single level not present' => [$base_search_array, 'notthere', false],
 
-            'multiple level present'                       => [$base_search_array, 'test1.test1', true],
-            'multiple level present custom delim'          => [$base_search_array, 'test1~test1', true, '~'],
-            'multiple level not present'                   => [$base_search_array, 'test1.notthere', false],
-            'multiple level not present custom delim'      => [$base_search_array, 'test1~notthere', false, '~'],
+            'multiple level present' => [$base_search_array, 'test1.test1', true],
+            'multiple level present custom delim' => [$base_search_array, 'test1~test1', true, '~'],
+            'multiple level not present' => [$base_search_array, 'test1.notthere', false],
+            'multiple level not present custom delim' => [$base_search_array, 'test1~notthere', false, '~'],
             'multiple level many not present custom delim' => [$base_search_array, 'test1~test1~blah1~blah2~blah3~blah4~blah5', false, '~'],
 
         ];
@@ -485,17 +489,17 @@ class DotTest extends TestCase {
      */
     public static function flattenDataProvider() {
         return [
-            'single item pass through'                    => [['test' => 'test'], ['test' => 'test']],
-            'single nested item'                          => [['test' => ['test' => 'test']], ['test.test' => 'test']],
-            'multi items pass through'                    => [
+            'single item pass through' => [['test' => 'test'], ['test' => 'test']],
+            'single nested item' => [['test' => ['test' => 'test']], ['test.test' => 'test']],
+            'multi items pass through' => [
                 ['test1' => 'test1', 'test2' => 'test2'],
                 ['test1' => 'test1', 'test2' => 'test2'],
             ],
-            'multi nested items'                          => [
+            'multi nested items' => [
                 ['test1' => ['test1' => 'test1'], 'test2' => 'test2'],
                 ['test1.test1' => 'test1', 'test2' => 'test2'],
             ],
-            'multi nested items non string keys'          => [
+            'multi nested items non string keys' => [
                 ['test1' => ['test1' => 'test1'], 'test2' => ['test2']],
                 ['test1.test1' => 'test1', 'test2.0' => 'test2'],
             ],
@@ -503,7 +507,7 @@ class DotTest extends TestCase {
                 ['test1' => ['test1' => 'test1'], 'test2' => ['test2', 'test2a']],
                 ['test1.test1' => 'test1', 'test2.0' => 'test2', 'test2.1' => 'test2a'],
             ],
-            'deep nested items multiple non string keys'  => [
+            'deep nested items multiple non string keys' => [
                 ['test1' => ['test1' => ['test1' => [['test1']]]], 'test2' => ['test2', 'test2a']],
                 ['test1.test1.test1.0.0' => 'test1', 'test2.0' => 'test2', 'test2.1' => 'test2a'],
             ],
@@ -515,8 +519,8 @@ class DotTest extends TestCase {
      */
     public static function flattenWithCustomDelimitersDataProvider() {
         return [
-            'single nested item'                          => ['_', ['test' => ['test' => 'test']], ['test_test' => 'test']],
-            'multi nested items'                          => [
+            'single nested item' => ['_', ['test' => ['test' => 'test']], ['test_test' => 'test']],
+            'multi nested items' => [
                 '--',
                 ['test1' => ['test1' => 'test1'], 'test2' => 'test2'],
                 ['test1--test1' => 'test1', 'test2' => 'test2'],
@@ -526,7 +530,7 @@ class DotTest extends TestCase {
                 ['test1' => ['test1' => 'test1'], 'test2' => ['test2', 'test2a']],
                 ['test1*test1' => 'test1', 'test2*0' => 'test2', 'test2*1' => 'test2a'],
             ],
-            'deep nested items multiple non string keys'  => [
+            'deep nested items multiple non string keys' => [
                 '~',
                 ['test1' => ['test1' => ['test1' => [['test1']]]], 'test2' => ['test2', 'test2a']],
                 ['test1~test1~test1~0~0' => 'test1', 'test2~0' => 'test2', 'test2~1' => 'test2a'],
