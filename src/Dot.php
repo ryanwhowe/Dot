@@ -2,7 +2,8 @@
 
 namespace Ryanwhowe\Dot;
 
-use InvalidArgumentException;
+use Ryanwhowe\Dot\Exception\ArrayKeyNotSetException;
+use Ryanwhowe\Dot\Exception\InvalidDelimiterException;
 
 /**
  * Get and set and check values in an array using dot notation or any other optional key separator.
@@ -10,40 +11,83 @@ use InvalidArgumentException;
  */
 class Dot {
 
+    /**
+     * The default delimiter for separating keys is a period character, but any string that explode() will support can be utilized
+     */
     const DEFAULT_DELIMITER = '.';
 
+    /**
+     * When the :count() method runs, if the value in the searchKey location is not an array, return 0
+     */
     const ZERO_ON_NON_ARRAY = 1;
+
+    /**
+     * When the :count() method runs, if the value in the searchKey location is not an array, return -1
+     */
     const NEGATIVE_ON_NON_ARRAY = 2;
+
+    /**
+     * Several methods can be set to throw an ArrayKeyNotSetException if an array key is not set in the target array
+     */
+    const ARRAY_KEY_MISSING_EXCEPTION = 1;
+
+    /**
+     * @var string|null This stores the original search key before the recursive search traverses the array.
+     */
+    private static ?string $searchKey = null;
 
     /**
      * This class is a static class and should not be instantiated
      */
-    private function __construct() {}
+    private function __construct() { }
 
     /**
-     * Return the value that the array has for the dot notation key, if there is no value to return the default is returned
+     * Return the value that the array has for the dot notation key, if there is no value to return the default is
+     * returned
      *
      * @param mixed[]          $array
      * @param non-empty-string $key
      * @param mixed|null       $default
      * @param non-empty-string $delimiter
+     * @param int              $missingKeyException if set to Dot::ARRAY_KEY_MISSING_EXCEPTION will throw an exception
+     *     if key is not found
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return array|mixed|null
+     * @throws InvalidDelimiterException if an invalid delimiter is used
+     * @throws ArrayKeyNotSetException if missingKeyException is set to ARRAY_KEY_MISSING_EXCEPTION and they key is not
+     *     found
      */
-    public static function get(array $array, string $key, $default = null, string $delimiter = self::DEFAULT_DELIMITER) {
+    public static function get(array $array, string $key, mixed $default = null, string $delimiter = self::DEFAULT_DELIMITER, int $missingKeyException = 0): mixed {
         self::validateDelimiter($delimiter);
+        if (null === self::$searchKey) {
+            self::$searchKey = $key;
+        }
         $keys = explode($delimiter, $key);
         $key_pos = array_shift($keys);
 
         if (array_key_exists($key_pos, $array)) {
             if (is_array($array[$key_pos]) && count($keys)) {
-                return self::get($array[$key_pos], implode($delimiter, $keys), $default, $delimiter);
+                return self::get($array[$key_pos], implode($delimiter, $keys), $default, $delimiter, $missingKeyException);
             } else {
-                if (count($keys)) return $default;
+                if (count($keys)) {
+                    if (self::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
+                        $_searchKey = self::$searchKey;
+                        self::$searchKey = null;
+                        throw new ArrayKeyNotSetException($_searchKey);
+                    }
+                    self::$searchKey = null;
+                    return $default;
+                };
+                self::$searchKey = null;
                 return $array[$key_pos];
             }
         } else {
+            if (self::ARRAY_KEY_MISSING_EXCEPTION === $missingKeyException) {
+                $_searchKey = self::$searchKey;
+                self::$searchKey = null;
+                throw new ArrayKeyNotSetException($_searchKey);
+            }
+            self::$searchKey = null;
             return $default;
         }
     }
@@ -57,10 +101,10 @@ class Dot {
      * @param array|mixed|null $value
      * @param non-empty-string $delimiter
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return void
+     * @throws InvalidDelimiterException if an invalid delimiter is used
      */
-    public static function set(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER): void {
+    public static function set(array &$array, string $key, mixed $value, string $delimiter = self::DEFAULT_DELIMITER): void {
         self::validateDelimiter($delimiter);
         $keys = explode($delimiter, $key);
         $key_pos = array_shift($keys);
@@ -80,13 +124,18 @@ class Dot {
      * @param non-empty-string $key Dot notation key
      * @param non-empty-string $delimiter
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return bool
+     * @throws InvalidDelimiterException if an invalid delimiter is used
      */
     public static function has(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER): bool {
         self::validateDelimiter($delimiter);
-        $v = self::get($array, $key, "\0\0", $delimiter);
-        return ($v !== "\0\0"); // if the default value is returned then the key was not found
+        $default = "\0\0";
+        try {
+            $v = self::get($array, $key, $default, $delimiter);
+        } catch (ArrayKeyNotSetException) {
+            $v = $default; // this should not execute
+        }
+        return ($v !== $default); // if the default value is returned then the key was not found
     }
 
     /**
@@ -99,14 +148,18 @@ class Dot {
      * @param non-empty-string $key
      * @param non-empty-string $delimiter
      * @param int              $return defaults to returning 0 count on not set or not array, can be set to return -1
+     * @param int              $missingKeyException if set to Dot::ARRAY_KEY_MISSING_EXCEPTION will throw an exception
+     *     if key is not found
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return int
+     * @throws ArrayKeyNotSetException if missingKeyException is set to ARRAY_KEY_MISSING_EXCEPTION and they key is not
+     *     found
+     * @throws InvalidDelimiterException if an invalid delimiter is used
      */
-    public static function count(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER, int $return = self::ZERO_ON_NON_ARRAY): int {
+    public static function count(array $array, string $key, string $delimiter = self::DEFAULT_DELIMITER, int $return = self::ZERO_ON_NON_ARRAY, int $missingKeyException = 0): int {
         self::validateDelimiter($delimiter);
         $default = (self::NEGATIVE_ON_NON_ARRAY === $return) ? -1 : 0;
-        $position = self::get($array, $key, '', $delimiter);
+        $position = self::get($array, $key, '', $delimiter, $missingKeyException);
         return is_array($position) ? count($position) : $default;
     }
 
@@ -119,13 +172,16 @@ class Dot {
      * @param non-empty-string $key
      * @param array|mixed|null $value
      * @param non-empty-string $delimiter
+     * @param int              $missingKeyException
      *
-     * @throws InvalidArgumentException if an invalid deliminator is used
      * @return void
+     * @throws InvalidDelimiterException if an invalid deliminator is used
+     * @throws ArrayKeyNotSetException if missingKeyException is set to ARRAY_KEY_MISSING_EXCEPTION and they key is not
+     *     found
      */
-    public static function append(array &$array, string $key, $value, string $delimiter = self::DEFAULT_DELIMITER): void {
+    public static function append(array &$array, string $key, mixed $value, string $delimiter = self::DEFAULT_DELIMITER, int $missingKeyException = 0): void {
         self::validateDelimiter($delimiter);
-        $current = self::get($array, $key, [], $delimiter);
+        $current = self::get($array, $key, [], $delimiter, $missingKeyException);
         $current = (is_array($current)) ? $current : [$current];
         $value = (is_array($value)) ? $value : [$value];
         self::set($array, $key, array_merge($current, $value), $delimiter);
@@ -137,10 +193,15 @@ class Dot {
      * @param mixed[]          $array
      * @param non-empty-string $key
      * @param non-empty-string $delimiter
+     * @param int              $missingKeyException
      *
      * @return void
+     * @throws ArrayKeyNotSetException if missingKeyException is set to ARRAY_KEY_MISSING_EXCEPTION and they key is not
+     *     found
+     * @throws InvalidDelimiterException
      */
-    public static function delete(array &$array, string $key, string $delimiter = self::DEFAULT_DELIMITER): void {
+    public static function delete(array &$array, string $key, string $delimiter = self::DEFAULT_DELIMITER, int $missingKeyException = 0): void {
+        self::get($array, $key, '', $delimiter, $missingKeyException);
         self::validateDelimiter($delimiter);
 
         if (!self::has($array, $key)) {
@@ -160,12 +221,12 @@ class Dot {
     /**
      * Flatten a multidimensional array to a single dimension with dot keys => value
      *
-     * @param mixed[]          $array     The source array to flatten
+     * @param mixed[]          $array The source array to flatten
      * @param non-empty-string $delimiter The delimiter to use between keys
-     * @param string           $prepend   if there is any prepend string to the key sequence to use
+     * @param string           $prepend if there is any prepend string to the key sequence to use
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return array<string, mixed> flattened single dimension array of the source array
+     * @throws InvalidDelimiterException if an invalid delimiter is used
      */
     public static function flatten(array $array, string $delimiter = self::DEFAULT_DELIMITER, string $prepend = ''): array {
         self::validateDelimiter($delimiter);
@@ -185,11 +246,10 @@ class Dot {
      *
      * @param string $delimiter
      *
-     * @throws InvalidArgumentException if an invalid delimiter is used
      * @return void
+     * @throws InvalidDelimiterException if an invalid delimiter is used
      */
-    private static function validateDelimiter(string $delimiter) {
-        if ($delimiter === '') throw new InvalidArgumentException('A string of length 0 Delimiter is not valid');
+    private static function validateDelimiter(string $delimiter): void {
+        if ($delimiter === '') throw new InvalidDelimiterException('');
     }
-
 }

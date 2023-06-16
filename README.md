@@ -6,8 +6,8 @@
 
 <p align="center">
     <a href="https://github.com/ryanwhowe/dot"><img src="https://img.shields.io/badge/source-ryanwhowe/dot-blue.svg?style=flat-square" alt="Source Code"></a>
-     <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
-    <a href="https://github.com/ryanwhowe/dot/blob/2.x/LICENSE"><img src="https://img.shields.io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
+    <a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/ryanwhowe/dot.svg?style=flat-square&colorB=%238892BF" alt="PHP Programming Language"></a>
+    <a href="https://github.com/ryanwhowe/dot/blob/3.x/LICENSE"><img src="https://img.shields.io/packagist/l/ryanwhowe/dot.svg?style=flat-square&colorB=darkcyan" alt="Read License"></a>
     <a href="https://github.com/ryanwhowe/dot/actions/workflows/php.yml"><img src="https://img.shields.io/github/actions/workflow/status/ryanwhowe/dot/php.yml?branch=1.x&logo=github&style=flat-square" alt="Build Status"></a>
 </p>
 
@@ -34,6 +34,17 @@ changes and/or bug fixes that are found. But with [Semantic Versioning][] there 
 releases made to the branch and there are no plans for another major version that supports php 5.6. I will however try
 and backport any major functionality or feature additions to the `1.x` branch.
 
+The `2.x` branch has the php ^7.1 support if you require that for your project. As with the `1.x` branch I will keep
+that patched with any non-breaking changes and/or bugs that are found.
+
+>
+> Warning: When you have xDebug enabled the recursion depth is set to 100, however the PHP
+> [manual][] advises against doing 100-200 recursion levels as it can smash the stack and cause termination of the
+> current
+> script. This class utilizes recursion to traverse the array. If you need to traverse an array with depth deeper than
+> 100 levels this likely is the wrong tool to utilize.
+>
+
 ## Installation
 
 The preferred method of installation is via [Composer][]. Run the following command to install the package and add it as
@@ -50,8 +61,7 @@ The Dot class contains static methods to facilitate the safe access, setting, un
 ### `Dot::has()`
 
 The `Dot::has()` checks to see if there is a value in the search array for the search key. This method utilizes
-recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to search
-further down than 100 levels this likely is the wrong tool to utilize.
+recursion to traverse the array.
 
 #### Description
 
@@ -115,14 +125,12 @@ false
 ### `Dot::get()`
 
 The `Dot::get()` method is for getting data from an array provided that there is a key that exists in the search
-location, if there is not, then return a default value instead. This method utilizes recursion to traverse the array.
-Most installations of php have a recursion depth limit of 100, if you need to search further down than 100 levels this
-likely is the wrong tool to utilize.
+location, if there is not, then return a default value instead.
 
 #### Description
 
 ```
-Dot::get(array $searchArray, string $searchKey, mixed $default = null, string $delimiter = '.'): mixed
+Dot::get(array $searchArray, string $searchKey, mixed $default = null, string $delimiter = '.', int $missingKeyException = 0): mixed
 ```
 
 #### Parameters
@@ -141,6 +149,9 @@ keys number strings can be used instead to access the appropriate position in th
 <dt>delimiter</dt>
 <dd>The key delimiter can be specified, this is needed when there are '.' values contained within the expected 
 array keys already</dd>
+
+<dt>missingKeyException</dt>
+<dd>If this is set to Dot::ARRAY_KEY_MISSING_EXCEPTION the method will throw an ArrayKeyNotSetException if the searchKey is not found in the searchArray instead of the default value.  This allows for a try/catch flow to be utilized with the method if additional logic is needed when the searchKey is missing.</dd>
 </dl>
 
 #### Return Values
@@ -182,12 +193,33 @@ valueForKey0
 Nothing Here
 ```
 
+##### Example #3 using Exception logic with get()
+
+```php
+$array = ['test' => ['test1' => 'test1value']];
+
+try {
+    echo Dot::get($array, 'test.test1', 'Nothing Here', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION), PHP_EOL;
+} catch(ArrayKeyNotSetException $e){
+    echo $e->getMessate(), PHP_EOL;
+}
+
+try {
+    echo Dot::get($array, 'test.test2', 'Nothing Here', Dot::DEFAULT_DELIMITER, Dot::ARRAY_KEY_MISSING_EXCEPTION), PHP_EOL;
+} catch(ArrayKeyNotSetException $e){
+    echo $e->getMessage(), PHP_EOL;
+}
+```
+
+```shell
+test1value
+The arrayKey, 'test.test2' is not set in the source array.
+```
+
 ### `Dot::set()`
 
 The `Dot::set()` method will set the passed value inside the provided array at the location of the key provided.  
-The set method will create the key structure needed to place the value in the array if it is not present already This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The set method will create the key structure needed to place the value in the array if it is not present already.
 
 #### Description
 
@@ -283,15 +315,14 @@ array (
 
 ### `Dot::append()`
 
-The `Dot::append()` method will set the passed value as an array value inside the provided array at the location of the key provided. If the location already contains a value the values will be merged into a single array.  The 
-append method will create the key structure needed to place the array value in the array if it is not present already. This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The `Dot::append()` method will set the passed value as an array value inside the provided array at the location of the
+key provided. If the location already contains a value the values will be merged into a single array. The
+append method will create the key structure needed to place the array value in the array if it is not present already.
 
 #### Description
 
 ```
-Dot::append(array &$appendArray, string $appendKey, mixed $value, string $delimiter = '.'): void
+Dot::append(array &$appendArray, string $appendKey, mixed $value, string $delimiter = '.', int $missingKeyException): void
 ```
 
 #### Parameters
@@ -310,6 +341,10 @@ keys number strings can be used instead to access the appropriate position in th
 <dt>delimiter</dt>
 <dd>The key delimiter can be specified, this is needed when there are '.' values contained within the expected 
 array keys already</dd>
+
+<dt>missingKeyException</dt>
+<dd>If this is set to Dot::ARRAY_KEY_MISSING_EXCEPTION the method will throw an ArrayKeyNotSetException if the searchKey is not found in the searchArray instead of the default value.  This allows for a try/catch flow to be utilized with the method if additional logic is needed when the searchKey is missing.</dd>
+
 </dl>
 
 #### Return Values
@@ -382,14 +417,13 @@ array (
 
 ### `Dot::delete()`
 
-The `Dot::delete()` method will unset the key location provided.  If the key location is not in the array there will be no effect on the passed array. This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The `Dot::delete()` method will unset the key location provided. If the key location is not in the array there will be
+no effect on the passed array.
 
 #### Description
 
 ```
-Dot::delete(array &$deleteArray, string $deleteKey, string $delimiter = '.'): void
+Dot::delete(array &$deleteArray, string $deleteKey, string $delimiter = '.', int $missingKeyException): void
 ```
 
 #### Parameters
@@ -405,6 +439,10 @@ keys number strings can be used instead to access the appropriate position in th
 <dt>delimiter</dt>
 <dd>The key delimiter can be specified, this is needed when there are '.' values contained within the expected 
 array keys already</dd>
+
+<dt>missingKeyException</dt>
+<dd>If this is set to Dot::ARRAY_KEY_MISSING_EXCEPTION the method will throw an ArrayKeyNotSetException if the searchKey is not found in the searchArray instead of the default value.  This allows for a try/catch flow to be utilized with the method if additional logic is needed when the searchKey is missing.</dd>
+
 </dl>
 
 #### Return Values
@@ -447,15 +485,13 @@ array (
 ### `Dot::count()`
 
 The `Dot::count()` method will generate a count of the elements in the location of the key provided. If the value at the
-location of the key proivided is not an array (or there is no value at the provided key) by default the method will
-return 0. This behavior can be changed to return a -1 instead when there is no value or a non array value. This method
-utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to
-search further down than 100 levels this likely is the wrong tool to utilize.
+location of the key provided is not an array (or there is no value at the provided key) by default the method will
+return 0. This behavior can be changed to return a -1 instead when there is no value or a non array value.
 
 #### Description
 
 ```
-Dot::count(array &$setArray, string $setKey, string $delimiter = '.', int $return = Dot::ZERO_ON_NON_ARRAY): int
+Dot::count(array &$setArray, string $setKey, string $delimiter = '.', int $return = Dot::ZERO_ON_NON_ARRAY, int $missingKeyException = 0): int
 ```
 
 #### Parameters
@@ -477,6 +513,10 @@ array keys already</dd>
 value is not an array.  This can be changed using the Dot::NEGATIVE_ON_NON_ARRAY constant instead return a -1 if 
 there is not a value set or the value is not an array at the key location.
 </dd>
+
+<dt>missingKeyException</dt>
+<dd>If this is set to Dot::ARRAY_KEY_MISSING_EXCEPTION the method will throw an ArrayKeyNotSetException if the searchKey is not found in the searchArray instead of the default value.  This allows for a try/catch flow to be utilized with the method if additional logic is needed when the searchKey is missing.</dd>
+
 </dl>
 
 #### Return Values
@@ -542,8 +582,7 @@ var_export($result); echo PHP_EOL;
 
 The `Dot::flatten()` method will flatten a multidimensional array to a single dimensional array with the dotKeys =>
 values as the returned new array. Each non-array value in the source array will have a cooresponding line in the output
-array. This method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of
-100, if you need to search further down than 100 levels this likely is the wrong tool to utilize.
+array.
 
 #### Description
 
@@ -602,4 +641,7 @@ array (
 ```
 
 [composer]: http://getcomposer.org/
+
 [semantic versioning]: https://semver.org/spec/v2.0.0.html
+
+[manual]: https://www.php.net/manual/en/functions.user-defined.php#example-149
