@@ -13,7 +13,10 @@
     "autoload": {
         "psr-4": {
             "Ryanwhowe\\Dot\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "authors": [
         {
