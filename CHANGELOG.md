@@ -5,14 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 3.0.0 - 2023-06-15
+## 3.0.0 - 2023-06-16
+
+### Added
+
+* `Dot::get()`, `Dot::count()`, `Dot::delete()`, `Dot::append()` can now optionally throw
+  an `ryanwhowe\Dot\Exception\ArrayKeyNotSetException` if the requested searchKey is not set in the searchArray. (#17)
 
 ### Changed
 
-* Require php `^8.0`
-* Updated Exceptions thrown. All Exceptions are extended from the `ryanwhowe\Dot\Exceptions\DotException` class which is
-  extended from the base `\RuntimeExpection` class.
-* Dot::get() can now
+* Require php `^8.0` (#17)
+* All instances of thrown `InvalidArgumentExcpetion` have been refactored to
+  be `ryanwhowe\Dot\Exception\InvalidDelimiterException` (#17)
+* Updated Exceptions thrown. All Exceptions are extended from the `ryanwhowe\Dot\Exception\DotException` class which is
+  extended from the base `\Expection` class. (#17)
 
 ## 2.0.0 - 2023-06-15
 
