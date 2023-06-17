@@ -50,6 +50,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * Require php `^7.1` (#4)
 
+## 1.2.0 - 2023-06-17
+
+### Added
+
+* `functions.php` has been added and included in the autoload to make wrapper function available globally (#21)
+    * `dotGet()` has been added to wrap `Dot::Get()` static method (#21)
+    * `dotSet()` has been added to wrap `Dot::Set()` static method (#21)
+    * `dotHas()` has been added to wrap `Dot::Has()` static method (#21)
+    * `dotCount()` has been added to wrap `Dot::Count()` static method (#21)
+    * `dotDelete()` has been added to wrap `Dot::Delete()` static method (#21)
+    * `dotAppend()` has been added to wrap `Dot::Append()` static method (#21)
+    * `dotFlatten()` has been added to wrap `Dot::Flatten()` static method (#21)
+
+
 ## 1.1.0 - 2023-06-13
 
 ### Added
