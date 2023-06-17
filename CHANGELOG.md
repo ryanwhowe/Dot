@@ -30,14 +30,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-* `functions.php` has been added and included in the autoload to make wrapper function available globally (#19)
-  * `dotGet()` has been added to wrap `Dot::Get()` static method (#19)
-  * `dotSet()` has been added to wrap `Dot::Set()` static method (#19)
-  * `dotHas()` has been added to wrap `Dot::Has()` static method (#19)
-  * `dotCount()` has been added to wrap `Dot::Count()` static method (#19)
-  * `dotDelete()` has been added to wrap `Dot::Delete()` static method (#19)
-  * `dotAppend()` has been added to wrap `Dot::Append()` static method (#19)
-  * `dotFlatten()` has been added to wrap `Dot::Flatten()` static method (#19)
+* `functions.php` has been added and included in the autoload to make wrapper function available globally (#20)
+  * `dotGet()` has been added to wrap `Dot::Get()` static method (#20)
+  * `dotSet()` has been added to wrap `Dot::Set()` static method (#20)
+  * `dotHas()` has been added to wrap `Dot::Has()` static method (#20)
+  * `dotCount()` has been added to wrap `Dot::Count()` static method (#20)
+  * `dotDelete()` has been added to wrap `Dot::Delete()` static method (#20)
+  * `dotAppend()` has been added to wrap `Dot::Append()` static method (#20)
+  * `dotFlatten()` has been added to wrap `Dot::Flatten()` static method (#20)
 
 ## 2.0.0 - 2023-06-15
 
