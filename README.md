@@ -23,9 +23,17 @@ Q: There are quite a few 'dot' projects that exist on Packagist, what is differe
 
 Q: Why add this to Packagist?
 >
-> This package has been used on several of my projects both personally and professionally and I am tired of copying
+> This package has been used on several of my projects both personally and professionally, and I am tired of copying
 > the class from one project to another. If my teams and I get usage out of this project, I wanted to share it to
 > allow anyone else who this could help use it as well.
+
+>
+> Warning: When you have xDebug enabled the recursion depth is set to 100, however the PHP
+> [manual][] advises against doing 100-200 recursion levels as it can smash the stack and cause termination of the
+> current
+> script. This class utilizes recursion to traverse the array. If you need to traverse an array with depth deeper than
+> 100 levels this likely is the wrong tool to utilize.
+>
 
 ## Installation
 
@@ -38,13 +46,15 @@ composer require ryanwhowe/dot
 
 ## Usage
 
-The Dot class contains static methods to facilitate the safe access, setting, unsetting and counting of array data in php.
+The Dot class contains static methods to facilitate the safe access, setting, unsetting and counting of array data in
+php.
 
 ### `Dot::has()`
 
 The `Dot::has()` checks to see if there is a value in the search array for the search key. This method utilizes
-recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to search
-further down than 100 levels this likely is the wrong tool to utilize.
+recursion to traverse the array.
+
+There is a globally available `dotHas()` function, that wraps the `Dot::has()` static method included in the autoloader.
 
 #### Description
 
@@ -108,9 +118,9 @@ false
 ### `Dot::get()`
 
 The `Dot::get()` method is for getting data from an array provided that there is a key that exists in the search
-location, if there is not, then return a default value instead. This method utilizes recursion to traverse the array.
-Most installations of php have a recursion depth limit of 100, if you need to search further down than 100 levels this
-likely is the wrong tool to utilize.
+location, if there is not, then return a default value instead.
+
+There is a globally available `dotGet()` function, that wraps the `Dot::get()` static method included in the autoloader.
 
 #### Description
 
@@ -178,9 +188,9 @@ Nothing Here
 ### `Dot::set()`
 
 The `Dot::set()` method will set the passed value inside the provided array at the location of the key provided.  
-The set method will create the key structure needed to place the value in the array if it is not present already This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The set method will create the key structure needed to place the value in the array if it is not present already.
+
+There is a globally available `dotSet()` function, that wraps the `Dot::set()` static method included in the autoloader.
 
 #### Description
 
@@ -276,10 +286,12 @@ array (
 
 ### `Dot::append()`
 
-The `Dot::append()` method will set the passed value as an array value inside the provided array at the location of the key provided. If the location already contains a value the values will be merged into a single array.  The 
-append method will create the key structure needed to place the array value in the array if it is not present already. This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The `Dot::append()` method will set the passed value as an array value inside the provided array at the location of the
+key provided. If the location already contains a value the values will be merged into a single array. The
+append method will create the key structure needed to place the array value in the array if it is not present already.
+
+There is a globally available `dotAppend()` function, that wraps the `Dot::append()` static method included in the
+autoloader.
 
 #### Description
 
@@ -375,9 +387,11 @@ array (
 
 ### `Dot::delete()`
 
-The `Dot::delete()` method will unset the key location provided.  If the key location is not in the array there will be no effect on the passed array. This
-method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you
-need to search further down than 100 levels this likely is the wrong tool to utilize.
+The `Dot::delete()` method will unset the key location provided. If the key location is not in the array there will be
+no effect on the passed array.
+
+There is a globally available `dotDelete()` function, that wraps the `Dot::delete()` static method included in the
+autoloader.
 
 #### Description
 
@@ -440,10 +454,11 @@ array (
 ### `Dot::count()`
 
 The `Dot::count()` method will generate a count of the elements in the location of the key provided. If the value at the
-location of the key proivided is not an array (or there is no value at the provided key) by default the method will
-return 0. This behavior can be changed to return a -1 instead when there is no value or a non array value. This method
-utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of 100, if you need to
-search further down than 100 levels this likely is the wrong tool to utilize.
+location of the key provided is not an array (or there is no value at the provided key) by default the method will
+return 0. This behavior can be changed to return a -1 instead when there is no value or a non array value.
+
+There is a globally available `dotCount()` function, that wraps the `Dot::count()` static method included in the
+autoloader.
 
 #### Description
 
@@ -535,8 +550,10 @@ var_export($result); echo PHP_EOL;
 
 The `Dot::flatten()` method will flatten a multidimensional array to a single dimensional array with the dotKeys =>
 values as the returned new array. Each non-array value in the source array will have a cooresponding line in the output
-array. This method utilizes recursion to traverse the array. Most installations of php have a recursion depth limit of
-100, if you need to search further down than 100 levels this likely is the wrong tool to utilize.
+array.
+
+There is a globally available `dotFlatten()` function, that wraps the `Dot::flatten()` static method included in the
+autoloader.
 
 #### Description
 
@@ -595,3 +612,4 @@ array (
 ```
 
 [composer]: http://getcomposer.org/
+[manual]: https://www.php.net/manual/en/functions.user-defined.php#example-149
