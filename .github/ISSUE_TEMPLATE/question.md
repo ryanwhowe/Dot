@@ -1,5 +1,8 @@
 ---
-name: Question about: Ask a question about how to use this library labels: question assignees:
+name: Question
+about: Ask a question about how to use this library
+labels: question
+assignees: ''
 ---
 <!--- Provide a general summary of your question within the above title. -->
 

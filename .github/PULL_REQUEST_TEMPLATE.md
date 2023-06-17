@@ -7,7 +7,7 @@ Fixes # (issue)
 
 ## Type of change
 
-Please delete options that are not relevant (along with this comment :-) ).
+<!-- Please delete options that are not relevant (along with this comment :-) ). -->
 
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
