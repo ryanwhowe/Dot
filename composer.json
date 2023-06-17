@@ -13,7 +13,10 @@
     "autoload": {
         "psr-4": {
             "Ryanwhowe\\Dot\\": "src/"
-        }
+        },
+        "files": [
+            "src/functions.php"
+        ]
     },
     "authors": [
         {
@@ -23,7 +26,7 @@
     ],
     "autoload-dev": {
         "psr-4": {
-            "Tests\\Ryanwhowe\\Dot\\": "tests/"
+            "Ryanwhowe\\Dot\\Tests\\": "tests/"
         }
     },
     "require": {
@@ -32,6 +35,21 @@
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require-dev": {
-        "phpunit/phpunit": "*"
+        "phpunit/phpunit": "*",
+        "phpstan/phpstan": "^1.4",
+        "vimeo/psalm": "^4.30"
+    },
+    "scripts": {
+        "phpunit": "phpunit --verbose --colors=always",
+        "tests": [
+            "@phpunit"
+        ]
+    },
+    "scripts-descriptions": {
+        "analyze": "Run All project static analysis scripts",
+        "phpstan": "Run PHPStan against the project code on level 8",
+        "psalm": "Run psalm against the project code",
+        "phpunit": "Run PHPUnit tests",
+        "tests": "Run the static analysis and unit tests"
     }
 }
